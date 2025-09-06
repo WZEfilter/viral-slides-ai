@@ -11,6 +11,8 @@ import CreateSlideshow from "./pages/CreateSlideshow";
 import GenerationResults from "./pages/GenerationResults";
 import Library from "./pages/Library";
 import SettingsPage from "./pages/Settings";
+import Auth from "./pages/Auth";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -22,14 +24,36 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/create" element={<CreateSlideshow />} />
-          <Route path="/results" element={<GenerationResults />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/signup" element={<Dashboard />} />
-          <Route path="/login" element={<Dashboard />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/create" element={
+            <ProtectedRoute>
+              <CreateSlideshow />
+            </ProtectedRoute>
+          } />
+          <Route path="/results" element={
+            <ProtectedRoute>
+              <GenerationResults />
+            </ProtectedRoute>
+          } />
+          <Route path="/library" element={
+            <ProtectedRoute>
+              <Library />
+            </ProtectedRoute>
+          } />
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>
+          } />
+          {/* Legacy routes */}
+          <Route path="/signup" element={<Auth />} />
+          <Route path="/login" element={<Auth />} />
           <Route path="/how-it-works" element={<Index />} />
           <Route path="/features" element={<Index />} />
           <Route path="/demo" element={<GenerationResults />} />
