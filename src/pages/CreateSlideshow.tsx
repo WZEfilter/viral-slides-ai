@@ -210,10 +210,12 @@ const CreateSlideshow = () => {
 
               {/* Action Buttons */}
               <div className="space-y-3">
-                <Button variant="hero" size="lg" className="w-full">
-                  <Zap className="mr-2 h-5 w-5" />
-                  Generate Slideshow
-                </Button>
+                <Link to="/results">
+                  <Button variant="hero" size="lg" className="w-full">
+                    <Zap className="mr-2 h-5 w-5" />
+                    Generate Slideshow
+                  </Button>
+                </Link>
                 
                 <Button variant="glass" size="lg" className="w-full">
                   <Play className="mr-2 h-5 w-5" />

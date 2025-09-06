@@ -8,6 +8,9 @@ import NotFound from "./pages/NotFound";
 import PricingPage from "./pages/Pricing";
 import Dashboard from "./pages/Dashboard";
 import CreateSlideshow from "./pages/CreateSlideshow";
+import GenerationResults from "./pages/GenerationResults";
+import Library from "./pages/Library";
+import SettingsPage from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -22,13 +25,14 @@ const App = () => (
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/create" element={<CreateSlideshow />} />
+          <Route path="/results" element={<GenerationResults />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/signup" element={<Dashboard />} />
           <Route path="/login" element={<Dashboard />} />
           <Route path="/how-it-works" element={<Index />} />
           <Route path="/features" element={<Index />} />
-          <Route path="/demo" element={<CreateSlideshow />} />
-          <Route path="/library" element={<Dashboard />} />
-          <Route path="/settings" element={<Dashboard />} />
+          <Route path="/demo" element={<GenerationResults />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
