@@ -57,6 +57,23 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // ViralSlides Neo Theme
+        "neo-purple": "hsl(var(--neo-purple))",
+        "neo-pink": "hsl(var(--neo-pink))",
+        "neo-blue": "hsl(var(--neo-blue))",
+        "dark-purple": "hsl(var(--dark-purple))",
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-hero": "var(--gradient-hero)",
+        "gradient-card": "var(--gradient-card)",
+        "gradient-glass": "var(--gradient-glass)",
+      },
+      boxShadow: {
+        "glow-primary": "var(--glow-primary)",
+        "glow-accent": "var(--glow-accent)",
+        "glass": "var(--shadow-glass)",
+        "card": "var(--shadow-card)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -80,10 +97,37 @@ export default {
             height: "0",
           },
         },
+        "pulse-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px hsl(var(--neo-purple) / 0.4)",
+          },
+          "50%": {
+            boxShadow: "0 0 40px hsl(var(--neo-purple) / 0.8)",
+          },
+        },
+        "float": {
+          "0%, 100%": {
+            transform: "translateY(0px)",
+          },
+          "50%": {
+            transform: "translateY(-10px)",
+          },
+        },
+        "glow": {
+          "0%": {
+            boxShadow: "0 0 20px hsl(var(--neo-purple) / 0.3)",
+          },
+          "100%": {
+            boxShadow: "0 0 30px hsl(var(--neo-purple) / 0.6), 0 0 40px hsl(var(--neo-pink) / 0.3)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "float": "float 3s ease-in-out infinite",
+        "glow": "glow 0.3s ease-out forwards",
       },
     },
   },
