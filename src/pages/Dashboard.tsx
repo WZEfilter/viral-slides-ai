@@ -3,12 +3,19 @@ import { Card } from "@/components/ui/card";
 import { Plus, Calendar, TrendingUp, Users, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
+import { useProfile } from "@/hooks/useProfile";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 const Dashboard = () => {
+  const { profile, loading } = useProfile();
+  
+  const remainingCredits = profile ? profile.credits_limit - profile.credits_used : 0;
+  const usagePercentage = profile ? (profile.credits_used / profile.credits_limit) * 100 : 0;
+
   const stats = [
     { label: "Total Posts", value: "24", icon: TrendingUp, color: "neo-purple" },
     { label: "This Month", value: "8", icon: Calendar, color: "neo-pink" },
-    { label: "Credits Left", value: "156", icon: Zap, color: "neo-blue" },
+    { label: "Credits Left", value: remainingCredits.toString(), icon: Zap, color: "neo-blue" },
     { label: "Platforms", value: "3", icon: Users, color: "accent" },
   ];
 
@@ -17,6 +24,17 @@ const Dashboard = () => {
     { id: 2, title: "Business Growth Tips", platform: "TikTok", status: "Draft", date: "5 hours ago" },
     { id: 3, title: "Motivational Quotes", platform: "Pinterest", status: "Scheduled", date: "1 day ago" },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-primary">
+        <Navigation />
+        <div className="pt-24 pb-16 flex items-center justify-center">
+          <LoadingSpinner size="lg" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-primary">
@@ -27,7 +45,9 @@ const Dashboard = () => {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+              <h1 className="text-3xl font-bold text-foreground">
+                Welcome back{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}!
+              </h1>
               <p className="text-muted-foreground">Manage your viral content creation</p>
             </div>
             <Link to="/create">
@@ -119,10 +139,10 @@ const Dashboard = () => {
               <Card className="p-6 bg-gradient-card border border-neo-pink/20">
                 <h3 className="font-semibold text-foreground mb-2">Credits Usage</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  You have 156 credits remaining this month
+                  You have {remainingCredits} credits remaining this month
                 </p>
                 <div className="w-full bg-muted/20 rounded-full h-2 mb-4">
-                  <div className="bg-gradient-hero h-2 rounded-full" style={{ width: '65%' }} />
+                  <div className="bg-gradient-hero h-2 rounded-full" style={{ width: `${Math.min(usagePercentage, 100)}%` }} />
                 </div>
                 <Link to="/pricing">
                   <Button variant="neon" size="sm" className="w-full">

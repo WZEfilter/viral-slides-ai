@@ -1,75 +1,53 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import Navigation from '@/components/Navigation';
+import { ProfileSettings } from '@/components/ProfileSettings';
+import { usePlatforms } from '@/hooks/usePlatforms';
 import { 
+  Settings as SettingsIcon, 
   User, 
-  CreditCard, 
   Bell, 
+  CreditCard, 
   Shield, 
-  Instagram,
-  MessageCircle,
-  Globe,
-  Plus,
-  Check,
-  X,
-  Settings,
-  Zap,
-  Clock
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import Navigation from "@/components/Navigation";
+  Link as LinkIcon,
+  CheckCircle,
+  AlertCircle,
+  Crown,
+  Globe
+} from 'lucide-react';
 
-const SettingsPage = () => {
+const Settings = () => {
+  const { platforms, getConnectedPlatforms } = usePlatforms();
   const [notifications, setNotifications] = useState({
-    posts: true,
-    credits: true,
+    email: true,
+    push: false,
+    sms: false,
     marketing: false,
   });
 
-  const [platforms, setPlatforms] = useState([
-    {
-      id: "instagram",
-      name: "Instagram",
-      icon: Instagram,
-      connected: true,
-      accounts: 2,
-      color: "bg-gradient-to-br from-purple-500 to-pink-500"
-    },
-    {
-      id: "tiktok", 
-      name: "TikTok",
-      icon: MessageCircle,
-      connected: true,
-      accounts: 1,
-      color: "bg-black"
-    },
-    {
-      id: "pinterest",
-      name: "Pinterest", 
-      icon: Globe,
-      connected: false,
-      accounts: 0,
-      color: "bg-red-600"
-    }
-  ]);
+  const [platformConnections, setPlatformConnections] = useState(platforms);
 
   const togglePlatform = (platformId: string) => {
-    if (platformId === "pinterest") {
-      // Show connection modal for Pinterest
-      return;
-    }
-    setPlatforms(prev => 
+    setPlatformConnections(prev =>
       prev.map(p => 
         p.id === platformId 
           ? { ...p, connected: !p.connected }
           : p
       )
     );
+    
+    // Special handling for Pinterest - show connection modal
+    if (platformId === 'pinterest') {
+      // In a real app, this would open a connection modal
+      console.log('Opening Pinterest connection modal...');
+    }
   };
 
   return (
@@ -80,241 +58,298 @@ const SettingsPage = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground">Settings</h1>
+            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
+              <SettingsIcon className="h-8 w-8" />
+              Settings
+            </h1>
             <p className="text-muted-foreground">Manage your account preferences and integrations</p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Settings Navigation */}
-            <div className="lg:col-span-1">
-              <Card className="p-6 bg-gradient-card border border-neo-purple/20">
-                <nav className="space-y-2">
-                  {[
-                    { id: "profile", label: "Profile", icon: User },
-                    { id: "platforms", label: "Platforms", icon: Globe },
-                    { id: "billing", label: "Billing", icon: CreditCard },
-                    { id: "notifications", label: "Notifications", icon: Bell },
-                    { id: "security", label: "Security", icon: Shield },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      className="w-full flex items-center px-4 py-3 rounded-lg text-left text-foreground hover:bg-neo-purple/10 transition-colors"
-                    >
-                      <item.icon className="h-5 w-5 mr-3 text-neo-purple" />
-                      {item.label}
-                    </button>
-                  ))}
-                </nav>
-              </Card>
-            </div>
+          {/* Settings Tabs */}
+          <Tabs defaultValue="profile" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-5">
+              <TabsTrigger value="profile" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline">Profile</span>
+              </TabsTrigger>
+              <TabsTrigger value="platforms" className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                <span className="hidden sm:inline">Platforms</span>
+              </TabsTrigger>
+              <TabsTrigger value="billing" className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4" />
+                <span className="hidden sm:inline">Billing</span>
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="flex items-center gap-2">
+                <Bell className="h-4 w-4" />
+                <span className="hidden sm:inline">Notifications</span>
+              </TabsTrigger>
+              <TabsTrigger value="security" className="flex items-center gap-2 hidden lg:flex">
+                <Shield className="h-4 w-4" />
+                Security
+              </TabsTrigger>
+            </TabsList>
 
-            {/* Settings Content */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* Profile Settings */}
-              <Card className="p-6 bg-gradient-card border border-neo-purple/20">
-                <div className="flex items-center mb-6">
-                  <User className="h-5 w-5 mr-2 text-neo-purple" />
-                  <h2 className="text-xl font-semibold text-foreground">Profile</h2>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName" className="text-foreground">First Name</Label>
-                      <Input
-                        id="firstName"
-                        defaultValue="John"
-                        className="mt-1 bg-muted/10 border-neo-purple/20 focus:border-neo-purple/40"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName" className="text-foreground">Last Name</Label>
-                      <Input
-                        id="lastName"
-                        defaultValue="Doe"
-                        className="mt-1 bg-muted/10 border-neo-purple/20 focus:border-neo-purple/40"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="email" className="text-foreground">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      defaultValue="john@example.com"
-                      className="mt-1 bg-muted/10 border-neo-purple/20 focus:border-neo-purple/40"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="timezone" className="text-foreground">Timezone</Label>
-                    <Input
-                      id="timezone"
-                      defaultValue="Pacific Standard Time (PST)"
-                      className="mt-1 bg-muted/10 border-neo-purple/20 focus:border-neo-purple/40"
-                    />
-                  </div>
+            <TabsContent value="profile" className="space-y-6">
+              <ProfileSettings />
+            </TabsContent>
 
-                  <div className="flex justify-end">
-                    <Button variant="hero">Save Changes</Button>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Platform Connections */}
-              <Card className="p-6 bg-gradient-card border border-neo-purple/20">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center">
-                    <Globe className="h-5 w-5 mr-2 text-neo-purple" />
-                    <h2 className="text-xl font-semibold text-foreground">Connected Platforms</h2>
-                  </div>
-                  <Badge className="bg-neo-purple/20 text-neo-purple border-neo-purple/30">
-                    Creator Plan
-                  </Badge>
-                </div>
-
-                <div className="space-y-4">
-                  {platforms.map((platform) => (
-                    <div key={platform.id} className="flex items-center justify-between p-4 rounded-lg border border-neo-purple/20 hover:border-neo-purple/40 transition-colors">
-                      <div className="flex items-center space-x-4">
-                        <div className={`p-3 rounded-lg ${platform.color}`}>
-                          <platform.icon className="h-6 w-6 text-white" />
-                        </div>
+            <TabsContent value="platforms" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <LinkIcon className="h-5 w-5" />
+                    Connected Platforms
+                  </CardTitle>
+                  <CardDescription>
+                    Manage your social media platform connections for publishing content
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {platformConnections.map((platform) => (
+                    <div key={platform.id} className="flex items-center justify-between p-4 border border-neo-purple/20 rounded-lg bg-muted/5">
+                      <div className="flex items-center gap-3">
+                        <div className="text-2xl">{platform.icon}</div>
                         <div>
-                          <div className="flex items-center space-x-2">
-                            <h3 className="font-semibold text-foreground">{platform.name}</h3>
+                          <h3 className="font-medium text-foreground">{platform.name}</h3>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             {platform.connected ? (
-                              <Check className="h-4 w-4 text-green-400" />
+                              <div className="flex items-center gap-1">
+                                <CheckCircle className="h-4 w-4 text-green-500" />
+                                Connected
+                                {platform.accounts.length > 0 && (
+                                  <span>• {platform.accounts.length} account{platform.accounts.length > 1 ? 's' : ''}</span>
+                                )}
+                              </div>
                             ) : (
-                              <X className="h-4 w-4 text-red-400" />
+                              <div className="flex items-center gap-1">
+                                <AlertCircle className="h-4 w-4 text-orange-500" />
+                                Not connected
+                              </div>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground">
-                            {platform.connected 
-                              ? `${platform.accounts} account${platform.accounts !== 1 ? 's' : ''} connected`
-                              : "Not connected"
-                            }
-                          </p>
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         {platform.connected && (
-                          <Button variant="ghost" size="sm">
-                            <Settings className="h-4 w-4" />
+                          <Badge variant="outline" className="text-xs">
+                            {platform.capabilities.canPublish ? 'Publish' : 'Draft only'}
+                          </Badge>
+                        )}
+                        {platform.connected ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => togglePlatform(platform.id)}
+                          >
+                            Disconnect
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="hero"
+                            size="sm"
+                            onClick={() => togglePlatform(platform.id)}
+                          >
+                            Connect
                           </Button>
                         )}
-                        <Button
-                          variant={platform.connected ? "ghost" : "neon"}
-                          size="sm"
-                          onClick={() => togglePlatform(platform.id)}
-                        >
-                          {platform.connected ? "Disconnect" : "Connect"}
-                        </Button>
                       </div>
                     </div>
                   ))}
-                </div>
-
-                <Separator className="my-6 bg-neo-purple/20" />
-                
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Need more accounts? Upgrade to Entrepreneur plan for 5 accounts per platform.
-                  </p>
-                  <Link to="/pricing">
-                    <Button variant="premium">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Upgrade Plan
-                    </Button>
-                  </Link>
-                </div>
+                  
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Connect your social media accounts to start publishing content directly from ViralSlides AI.
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
               </Card>
+            </TabsContent>
 
-              {/* Billing & Credits */}
-              <Card className="p-6 bg-gradient-card border border-neo-purple/20">
-                <div className="flex items-center mb-6">
-                  <CreditCard className="h-5 w-5 mr-2 text-neo-purple" />
-                  <h2 className="text-xl font-semibold text-foreground">Billing & Credits</h2>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Current Plan */}
-                  <div className="p-4 rounded-lg bg-gradient-glass border border-neo-purple/20">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="font-semibold text-foreground">Creator Plan</h3>
-                        <p className="text-sm text-muted-foreground">$20/month • 180 credits</p>
-                      </div>
-                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                        Active
-                      </Badge>
+            <TabsContent value="billing" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    Billing & Credits
+                  </CardTitle>
+                  <CardDescription>
+                    Manage your subscription and credit usage
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center justify-between p-4 bg-gradient-card border border-neo-purple/20 rounded-lg">
+                    <div>
+                      <h3 className="font-semibold text-foreground flex items-center gap-2">
+                        <Crown className="h-4 w-4 text-yellow-500" />
+                        Current Plan: Free
+                      </h3>
+                      <p className="text-sm text-muted-foreground">100 credits per month</p>
                     </div>
-                    
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <Zap className="h-4 w-4 mr-2 text-neo-purple" />
-                          <span className="text-sm text-foreground">Credits remaining</span>
+                    <Button variant="hero">Upgrade</Button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-foreground">Payment Method</h4>
+                    <div className="flex items-center justify-between p-4 border border-neo-purple/20 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gradient-hero rounded flex items-center justify-center">
+                          <CreditCard className="h-4 w-4 text-white" />
                         </div>
-                        <span className="font-semibold text-neo-purple">156 / 180</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-                          <span className="text-sm text-foreground">Next billing</span>
+                        <div>
+                          <p className="font-medium text-foreground">No payment method</p>
+                          <p className="text-sm text-muted-foreground">Add a payment method to upgrade</p>
                         </div>
-                        <span className="text-sm text-muted-foreground">Jan 15, 2024</span>
                       </div>
+                      <Button variant="outline" size="sm">Add Card</Button>
                     </div>
                   </div>
 
-                  <div className="flex space-x-3">
-                    <Link to="/pricing">
-                      <Button variant="neon">Change Plan</Button>
-                    </Link>
-                    <Button variant="ghost">Billing History</Button>
-                    <Button variant="ghost">Cancel Subscription</Button>
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-foreground">Billing History</h4>
+                    <div className="text-center py-8 text-muted-foreground">
+                      <CreditCard className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                      <p>No billing history available</p>
+                      <p className="text-sm">Upgrade to a paid plan to see your billing history</p>
+                    </div>
                   </div>
-                </div>
+                </CardContent>
               </Card>
+            </TabsContent>
 
-              {/* Notifications */}
-              <Card className="p-6 bg-gradient-card border border-neo-purple/20">
-                <div className="flex items-center mb-6">
-                  <Bell className="h-5 w-5 mr-2 text-neo-purple" />
-                  <h2 className="text-xl font-semibold text-foreground">Notifications</h2>
-                </div>
-
-                <div className="space-y-4">
-                  {[
-                    { id: "posts", label: "Post updates", description: "Get notified when posts are published or fail" },
-                    { id: "credits", label: "Credit alerts", description: "Alerts when credits are running low" },
-                    { id: "marketing", label: "Marketing emails", description: "Tips, features, and promotional content" },
-                  ].map((setting) => (
-                    <div key={setting.id} className="flex items-center justify-between py-3">
+            <TabsContent value="notifications" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Bell className="h-5 w-5" />
+                    Notification Preferences
+                  </CardTitle>
+                  <CardDescription>
+                    Choose how you want to be notified about account activity
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="font-medium text-foreground">{setting.label}</h4>
-                        <p className="text-sm text-muted-foreground">{setting.description}</p>
+                        <h4 className="font-medium text-foreground">Email Notifications</h4>
+                        <p className="text-sm text-muted-foreground">Receive notifications via email</p>
                       </div>
                       <Switch
-                        checked={notifications[setting.id as keyof typeof notifications]}
-                        onCheckedChange={(checked) => 
-                          setNotifications(prev => ({ ...prev, [setting.id]: checked }))
-                        }
+                        checked={notifications.email}
+                        onCheckedChange={(checked) => setNotifications(prev => ({ ...prev, email: checked }))}
                       />
                     </div>
-                  ))}
-                </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium text-foreground">Push Notifications</h4>
+                        <p className="text-sm text-muted-foreground">Receive push notifications in your browser</p>
+                      </div>
+                      <Switch
+                        checked={notifications.push}
+                        onCheckedChange={(checked) => setNotifications(prev => ({ ...prev, push: checked }))}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium text-foreground">SMS Notifications</h4>
+                        <p className="text-sm text-muted-foreground">Receive important updates via SMS</p>
+                      </div>
+                      <Switch
+                        checked={notifications.sms}
+                        onCheckedChange={(checked) => setNotifications(prev => ({ ...prev, sms: checked }))}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium text-foreground">Marketing Communications</h4>
+                        <p className="text-sm text-muted-foreground">Receive updates about new features and offers</p>
+                      </div>
+                      <Switch
+                        checked={notifications.marketing}
+                        onCheckedChange={(checked) => setNotifications(prev => ({ ...prev, marketing: checked }))}
+                      />
+                    </div>
+                  </div>
+
+                  <Button className="w-full md:w-auto">Save Preferences</Button>
+                </CardContent>
               </Card>
-            </div>
-          </div>
+            </TabsContent>
+
+            <TabsContent value="security" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    Security Settings
+                  </CardTitle>
+                  <CardDescription>
+                    Manage your account security and privacy settings
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium text-foreground mb-2">Change Password</h4>
+                      <div className="space-y-3">
+                        <div>
+                          <Label htmlFor="current-password">Current Password</Label>
+                          <Input
+                            id="current-password"
+                            type="password"
+                            placeholder="Enter current password"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="new-password">New Password</Label>
+                          <Input
+                            id="new-password"
+                            type="password"
+                            placeholder="Enter new password"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="confirm-password">Confirm New Password</Label>
+                          <Input
+                            id="confirm-password"
+                            type="password"
+                            placeholder="Confirm new password"
+                          />
+                        </div>
+                        <Button>Update Password</Button>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-neo-purple/20">
+                      <h4 className="font-medium text-foreground mb-2">Two-Factor Authentication</h4>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Add an extra layer of security to your account
+                      </p>
+                      <Button variant="outline">Enable 2FA</Button>
+                    </div>
+
+                    <div className="pt-4 border-t border-neo-purple/20">
+                      <h4 className="font-medium text-foreground mb-2 text-red-500">Danger Zone</h4>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Permanently delete your account and all associated data
+                      </p>
+                      <Button variant="destructive">Delete Account</Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
   );
 };
 
-export default SettingsPage;
+export default Settings;
