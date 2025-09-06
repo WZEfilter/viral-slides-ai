@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      asset_mappings: {
+        Row: {
+          asset_id: string
+          asset_type: string
+          content_id: string
+          created_at: string
+          id: string
+          original_url: string
+        }
+        Insert: {
+          asset_id: string
+          asset_type: string
+          content_id: string
+          created_at?: string
+          id?: string
+          original_url: string
+        }
+        Update: {
+          asset_id?: string
+          asset_type?: string
+          content_id?: string
+          created_at?: string
+          id?: string
+          original_url?: string
+        }
+        Relationships: []
+      }
       credit_transactions: {
         Row: {
           amount: number
