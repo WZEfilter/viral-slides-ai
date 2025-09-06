@@ -14,6 +14,151 @@ export type Database = {
   }
   public: {
     Tables: {
+      credit_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          scenario_id: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          scenario_id?: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          scenario_id?: string | null
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_transactions_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      generated_content: {
+        Row: {
+          content_type: string
+          content_urls: string[] | null
+          created_at: string
+          credits_used: number | null
+          id: string
+          metadata: Json | null
+          prompt: string | null
+          published_platforms: string[] | null
+          scenario_id: string | null
+          status: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content_type: string
+          content_urls?: string[] | null
+          created_at?: string
+          credits_used?: number | null
+          id?: string
+          metadata?: Json | null
+          prompt?: string | null
+          published_platforms?: string[] | null
+          scenario_id?: string | null
+          status?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content_type?: string
+          content_urls?: string[] | null
+          created_at?: string
+          credits_used?: number | null
+          id?: string
+          metadata?: Json | null
+          prompt?: string | null
+          published_platforms?: string[] | null
+          scenario_id?: string | null
+          status?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_content_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      platform_connections: {
+        Row: {
+          access_token: string | null
+          account_id: string
+          account_username: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          platform_type: string
+          refresh_token: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          account_id: string
+          account_username: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          platform_type: string
+          refresh_token?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          account_id?: string
+          account_username?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          platform_type?: string
+          refresh_token?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -48,6 +193,48 @@ export type Database = {
           full_name?: string | null
           id?: string
           subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scenarios: {
+        Row: {
+          content_style: string | null
+          created_at: string
+          description: string | null
+          id: string
+          niche: string
+          platforms: string[] | null
+          status: string | null
+          target_audience: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content_style?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          niche: string
+          platforms?: string[] | null
+          status?: string | null
+          target_audience?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content_style?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          niche?: string
+          platforms?: string[] | null
+          status?: string | null
+          target_audience?: string | null
+          title?: string
           updated_at?: string
           user_id?: string
         }
