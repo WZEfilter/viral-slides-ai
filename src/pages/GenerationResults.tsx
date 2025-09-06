@@ -5,6 +5,8 @@ import { Download, Share2, RefreshCw, Play, Calendar, ArrowLeft, CheckCircle, Ey
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
+import { SlideEditor } from "@/components/SlideEditor";
+import { GenerationProgress } from "@/components/GenerationProgress";
 import { useToast } from "@/hooks/use-toast";
 import { usePlatforms } from "@/hooks/usePlatforms";
 import { useCredits } from "@/hooks/useCredits";

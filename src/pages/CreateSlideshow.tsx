@@ -13,6 +13,7 @@ import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { CreditMeter } from "@/components/CreditMeter";
 import { PlatformSelector } from "@/components/PlatformSelector";
+import { TemplateSelector } from "@/components/TemplateSelector";
 import { useCredits } from "@/hooks/useCredits";
 import { usePlatforms } from "@/hooks/usePlatforms";
 import { useToast } from "@/hooks/use-toast";
@@ -33,10 +34,60 @@ const CreateSlideshow = () => {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const templates = [
-    { id: "modern", name: "Modern Gradient", preview: "🎨" },
-    { id: "minimal", name: "Minimal Clean", preview: "⚪" },
-    { id: "bold", name: "Bold Typography", preview: "💪" },
-    { id: "neon", name: "Neon Vibes", preview: "✨" },
+    {
+      id: "motivational",
+      name: "Motivational Quotes",
+      description: "Inspiring quotes with dynamic backgrounds",
+      category: "lifestyle",
+      isPremium: false,
+      preview: "💪",
+      tags: ["motivation", "quotes", "lifestyle"]
+    },
+    {
+      id: "business",
+      name: "Business Tips",
+      description: "Professional business advice content",
+      category: "business",
+      isPremium: true,
+      preview: "📊",
+      tags: ["business", "tips", "professional"]
+    },
+    {
+      id: "travel",
+      name: "Travel Stories",
+      description: "Beautiful travel destination showcases",
+      category: "lifestyle",
+      isPremium: false,
+      preview: "✈️",
+      tags: ["travel", "adventure", "explore"]
+    },
+    {
+      id: "tech",
+      name: "Tech Reviews",
+      description: "Modern tech product presentations",
+      category: "technology",
+      isPremium: true,
+      preview: "📱",
+      tags: ["tech", "reviews", "gadgets"]
+    },
+    {
+      id: "minimal",
+      name: "Minimal Clean",
+      description: "Clean and simple designs",
+      category: "design",
+      isPremium: false,
+      preview: "⚪",
+      tags: ["minimal", "clean", "simple"]
+    },
+    {
+      id: "neon",
+      name: "Neon Vibes",
+      description: "Vibrant neon aesthetic content",
+      category: "design",
+      isPremium: true,
+      preview: "✨",
+      tags: ["neon", "vibrant", "aesthetic"]
+    }
   ];
 
   const models = [
@@ -107,25 +158,12 @@ const CreateSlideshow = () => {
             {/* Main Form */}
             <div className="lg:col-span-2 space-y-6">
               {/* Template Selection */}
-              <Card className="p-6 bg-gradient-card border border-neo-purple/20">
-                <h2 className="text-xl font-semibold text-foreground mb-4">Choose Template</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {templates.map((tmpl) => (
-                    <div
-                      key={tmpl.id}
-                      onClick={() => setTemplate(tmpl.id)}
-                      className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                        template === tmpl.id
-                          ? "border-neo-purple bg-neo-purple/10"
-                          : "border-neo-purple/20 hover:border-neo-purple/40"
-                      }`}
-                    >
-                      <div className="text-2xl mb-2">{tmpl.preview}</div>
-                      <p className="font-medium text-foreground text-sm">{tmpl.name}</p>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+              <TemplateSelector
+                templates={templates}
+                selectedTemplate={template}
+                onTemplateChange={setTemplate}
+                className="mb-6"
+              />
 
               {/* Content Input */}
               <Card className="p-6 bg-gradient-card border border-neo-purple/20">
