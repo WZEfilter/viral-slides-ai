@@ -6,45 +6,66 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CreditMeter } from '@/components/CreditMeter';
-import { Sparkles, Flame, Zap, AlertTriangle, Calendar, Clock, Save, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus, X, Clock, Calendar } from 'lucide-react';
 import { useCredits } from '@/hooks/useCredits';
 import { useToast } from '@/hooks/use-toast';
 import { useScenarios } from '@/hooks/useScenarios';
+import { usePlatforms } from '@/hooks/usePlatforms';
 import { supabase } from '@/integrations/supabase/client';
+
+interface ScheduleTime {
+  id: string;
+  time: string;
+}
+
+interface DaySchedule {
+  day: string;
+  enabled: boolean;
+  frequency: number;
+  times: ScheduleTime[];
+}
+
+interface PlatformSelection {
+  platformId: string;
+  accountIds: string[];
+}
 
 const CreateSlideshow = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { availableCredits, usedThisMonth, canAfford } = useCredits();
+  const { availableCredits, canAfford } = useCredits();
   const { createScenario, updateScenario, getScenarioById, saveDraft, loadDraft, clearDraft } = useScenarios();
+  const { platforms, getConnectedPlatforms } = usePlatforms();
   const [searchParams] = useSearchParams();
   const editingId = searchParams.get('edit');
   
-  const [prompt, setPrompt] = useState('');
-  const [enhancedPrompt, setEnhancedPrompt] = useState('');
-  const [imageCount, setImageCount] = useState([5]);
-  const [resolution, setResolution] = useState('portrait');
-  const [isDraft, setIsDraft] = useState(true);
-  const [model, setModel] = useState('flux-kontext-pro');
   const [title, setTitle] = useState('');
-  const [niche, setNiche] = useState('');
-  const [targetAudience, setTargetAudience] = useState('');
-  const [contentStyle, setContentStyle] = useState('');
-  const [platforms, setPlatforms] = useState<string[]>(['instagram']);
+  const [prompt, setPrompt] = useState('');
+  const [imageCount, setImageCount] = useState(5);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<PlatformSelection[]>([]);
   const [isScheduled, setIsScheduled] = useState(false);
-  const [scheduledTime, setScheduledTime] = useState('');
-  const [scheduleFrequency, setScheduleFrequency] = useState('once');
+  const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const [weekSchedule, setWeekSchedule] = useState<DaySchedule[]>([
+    { day: 'Monday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
+    { day: 'Tuesday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
+    { day: 'Wednesday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
+    { day: 'Thursday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
+    { day: 'Friday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
+    { day: 'Saturday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
+    { day: 'Sunday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
+  ]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isEnhancing, setIsEnhancing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  const connectedPlatforms = getConnectedPlatforms();
+  const totalCredits = imageCount * 1; // Base credit cost
+  const canGenerate = title.trim() && prompt.trim() && canAfford(totalCredits) && selectedPlatforms.length > 0;
+  const canSaveDraft = title.trim() && prompt.trim();
 
   // Load draft on mount and handle editing scenario
   useEffect(() => {
@@ -53,13 +74,13 @@ const CreateSlideshow = () => {
       if (scenario) {
         setTitle(scenario.title);
         setPrompt(scenario.description || '');
-        setNiche(scenario.niche);
-        setTargetAudience(scenario.target_audience || '');
-        setContentStyle(scenario.content_style || '');
-        setPlatforms(scenario.platforms);
         setIsScheduled(scenario.is_scheduled);
-        setScheduledTime(scenario.scheduled_time || '');
-        setScheduleFrequency(scenario.schedule_frequency || 'once');
+        // Initialize platform selections from stored platforms array
+        const platformSelections = scenario.platforms.map(platformId => ({
+          platformId,
+          accountIds: [] // Default to empty, would need to be stored in DB
+        }));
+        setSelectedPlatforms(platformSelections);
       }
     } else {
       // Load draft for new scenario
@@ -67,101 +88,86 @@ const CreateSlideshow = () => {
       if (draft) {
         setTitle(draft.title || '');
         setPrompt(draft.description || '');
-        setNiche(draft.niche || '');
-        setTargetAudience(draft.target_audience || '');
-        setContentStyle(draft.content_style || '');
-        setPlatforms(draft.platforms || ['instagram']);
         setIsScheduled(draft.is_scheduled || false);
-        setScheduledTime(draft.scheduled_time || '');
-        setScheduleFrequency(draft.schedule_frequency || 'once');
+        // Load platform selections from draft
+        const platformSelections = (draft.platforms || []).map(platformId => ({
+          platformId,
+          accountIds: []
+        }));
+        setSelectedPlatforms(platformSelections);
       }
     }
   }, [editingId, getScenarioById, loadDraft]);
 
   // Auto-save draft
   useEffect(() => {
-    if (!editingId && (title || prompt || niche)) {
+    if (!editingId && (title || prompt)) {
       const draftData = {
         title,
         description: prompt,
-        niche,
-        target_audience: targetAudience,
-        content_style: contentStyle,
-        platforms,
+        niche: 'general', // Default niche
+        platforms: selectedPlatforms.map(p => p.platformId),
         is_scheduled: isScheduled,
-        scheduled_time: scheduledTime,
-        schedule_frequency: scheduleFrequency
       };
       saveDraft(draftData);
     }
-  }, [title, prompt, niche, targetAudience, contentStyle, platforms, isScheduled, scheduledTime, scheduleFrequency, editingId, saveDraft]);
+  }, [title, prompt, selectedPlatforms, isScheduled, editingId, saveDraft]);
 
-  const platformOptions = [
-    { id: 'instagram', name: 'Instagram' },
-    { id: 'tiktok', name: 'TikTok' },
-    { id: 'youtube', name: 'YouTube' },
-    { id: 'facebook', name: 'Facebook' },
-    { id: 'twitter', name: 'Twitter' },
-  ];
-
-  const frequencyOptions = [
-    { id: 'once', name: 'Once' },
-    { id: 'daily', name: 'Daily' },
-    { id: 'weekly', name: 'Weekly' },
-    { id: 'monthly', name: 'Monthly' },
-  ];
-
-  const models = [
-    { id: 'flux-kontext-max', name: 'Flux.1 Kontext Max', credits: 2, icon: <Flame className="w-4 h-4" />, isHot: true },
-    { id: 'flux-kontext-pro', name: 'Flux.1 Kontext Pro', credits: 1, icon: <Flame className="w-4 h-4" />, isHot: true, isDefault: true },
-    { id: 'flux-pro', name: 'Flux1.1 Pro', credits: 1, icon: <Flame className="w-4 h-4" />, isHot: true },
-    { id: 'flux-ultra', name: 'Flux 1.1 Ultra', credits: 1.5, icon: <Zap className="w-4 h-4" />, isHot: false }
-  ];
-
-  const resolutions = [
-    { id: 'portrait', name: '9:16 (Portrait)', size: '1080x1920' },
-    { id: 'square', name: '1:1 (Square)', size: '1080x1080' },
-    { id: 'landscape', name: '16:9 (Landscape)', size: '1920x1080' }
-  ];
-
-  const selectedModel = models.find(m => m.id === model);
-  const totalCredits = (selectedModel?.credits || 1) * imageCount[0];
-  const canGenerate = prompt.trim() && title.trim() && niche.trim() && canAfford(totalCredits);
-  const canSaveDraft = title.trim() && niche.trim();
-
-  const handleEnhancePrompt = async () => {
-    if (!prompt.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a prompt first",
-        variant: "destructive",
-      });
-      return;
+  const handlePlatformToggle = (platformId: string, checked: boolean) => {
+    if (checked) {
+      const platform = connectedPlatforms.find(p => p.id === platformId);
+      if (platform && platform.accounts.length > 0) {
+        setSelectedPlatforms([...selectedPlatforms, {
+          platformId,
+          accountIds: [platform.accounts[0].id] // Default to first account
+        }]);
+      }
+    } else {
+      setSelectedPlatforms(selectedPlatforms.filter(p => p.platformId !== platformId));
     }
+  };
 
-    setIsEnhancing(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('enhance-prompt', {
-        body: { prompt }
-      });
+  const handleAccountToggle = (platformId: string, accountId: string, checked: boolean) => {
+    setSelectedPlatforms(selectedPlatforms.map(platform => {
+      if (platform.platformId === platformId) {
+        if (checked) {
+          return { ...platform, accountIds: [...platform.accountIds, accountId] };
+        } else {
+          return { ...platform, accountIds: platform.accountIds.filter(id => id !== accountId) };
+        }
+      }
+      return platform;
+    }));
+  };
 
-      if (error) throw error;
+  const handleDayToggle = (dayIndex: number, enabled: boolean) => {
+    setWeekSchedule(schedule => schedule.map((day, index) => 
+      index === dayIndex ? { ...day, enabled } : day
+    ));
+  };
 
-      setEnhancedPrompt(data.enhanced_prompt);
-      toast({
-        title: "Prompt Enhanced! ✨",
-        description: "Your prompt has been enhanced with AI",
-      });
-    } catch (error: any) {
-      console.error('Error enhancing prompt:', error);
-      toast({
-        title: "Error",
-        description: "Failed to enhance prompt",
-        variant: "destructive",
-      });
-    } finally {
-      setIsEnhancing(false);
-    }
+  const handleFrequencyChange = (dayIndex: number, frequency: number) => {
+    setWeekSchedule(schedule => schedule.map((day, index) => {
+      if (index === dayIndex) {
+        const newTimes = Array.from({ length: frequency }, (_, i) => 
+          day.times[i] || { id: `${i + 1}`, time: '09:00' }
+        );
+        return { ...day, frequency, times: newTimes };
+      }
+      return day;
+    }));
+  };
+
+  const handleTimeChange = (dayIndex: number, timeIndex: number, time: string) => {
+    setWeekSchedule(schedule => schedule.map((day, index) => {
+      if (index === dayIndex) {
+        const newTimes = day.times.map((t, tIndex) => 
+          tIndex === timeIndex ? { ...t, time } : t
+        );
+        return { ...day, times: newTimes };
+      }
+      return day;
+    }));
   };
 
   const handleSaveDraft = async () => {
@@ -172,13 +178,9 @@ const CreateSlideshow = () => {
       const scenarioData = {
         title,
         description: prompt,
-        niche,
-        target_audience: targetAudience,
-        content_style: contentStyle,
-        platforms,
+        niche: 'general',
+        platforms: selectedPlatforms.map(p => p.platformId),
         is_scheduled: isScheduled,
-        scheduled_time: isScheduled ? scheduledTime : undefined,
-        schedule_frequency: isScheduled ? scheduleFrequency : undefined,
       };
 
       if (editingId) {
@@ -218,13 +220,9 @@ const CreateSlideshow = () => {
       const scenarioData = {
         title,
         description: prompt,
-        niche,
-        target_audience: targetAudience,
-        content_style: contentStyle,
-        platforms,
+        niche: 'general',
+        platforms: selectedPlatforms.map(p => p.platformId),
         is_scheduled: isScheduled,
-        scheduled_time: isScheduled ? scheduledTime : undefined,
-        schedule_frequency: isScheduled ? scheduleFrequency : undefined,
       };
 
       let scenarioId = editingId;
@@ -239,12 +237,9 @@ const CreateSlideshow = () => {
       // Then generate content
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: {
-          prompt: enhancedPrompt || prompt,
-          imageCount: imageCount[0],
-          resolution,
-          isDraft,
-          model,
-          platforms,
+          prompt,
+          imageCount,
+          platforms: selectedPlatforms.map(p => p.platformId),
           title,
           scenarioId
         }
@@ -254,12 +249,12 @@ const CreateSlideshow = () => {
 
       toast({
         title: "Generation Started! 🎨",
-        description: "Your slideshow is being created. You'll be notified when it's ready.",
+        description: "Your content is being created. You'll be notified when it's ready.",
       });
 
       navigate('/results');
     } catch (error: any) {
-      console.error('Error generating slideshow:', error);
+      console.error('Error generating content:', error);
       toast({
         title: "Error",
         description: "Failed to start generation",
@@ -270,20 +265,12 @@ const CreateSlideshow = () => {
     }
   };
 
-  const handlePlatformChange = (platformId: string, checked: boolean) => {
-    if (checked) {
-      setPlatforms([...platforms, platformId]);
-    } else {
-      setPlatforms(platforms.filter(p => p !== platformId));
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-primary">
       <Navigation />
       
       <div className="pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
             <Button 
@@ -308,59 +295,21 @@ const CreateSlideshow = () => {
               {/* Basic Information */}
               <Card className="neo-card">
                 <CardHeader>
-                  <CardTitle>Basic Information</CardTitle>
+                  <CardTitle>Scenario Details</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="title">Scenario Title *</Label>
                     <Input
                       id="title"
-                      placeholder="e.g., Tech Innovation Campaign"
+                      placeholder="e.g., Daily Tech Updates"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="niche">Niche/Industry *</Label>
-                    <Input
-                      id="niche"
-                      placeholder="e.g., Technology, Fashion, Food"
-                      value={niche}
-                      onChange={(e) => setNiche(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="target-audience">Target Audience</Label>
-                    <Input
-                      id="target-audience"
-                      placeholder="e.g., Tech enthusiasts, 25-35 years old"
-                      value={targetAudience}
-                      onChange={(e) => setTargetAudience(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="content-style">Content Style</Label>
-                    <Input
-                      id="content-style"
-                      placeholder="e.g., Professional, Casual, Humorous"
-                      value={contentStyle}
-                      onChange={(e) => setContentStyle(e.target.value)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Content Prompt */}
-              <Card className="neo-card">
-                <CardHeader>
-                  <CardTitle>Content Prompt</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="prompt">Describe your content idea *</Label>
+                    <Label htmlFor="prompt">Content Prompt *</Label>
                     <Textarea
                       id="prompt"
                       placeholder="Describe what kind of content you want to create..."
@@ -370,44 +319,73 @@ const CreateSlideshow = () => {
                     />
                   </div>
 
-                  <Button 
-                    variant="outline" 
-                    onClick={handleEnhancePrompt}
-                    disabled={!prompt.trim() || isEnhancing}
-                  >
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
-                  </Button>
-
-                  {enhancedPrompt && (
-                    <div className="p-4 bg-muted/50 rounded-lg border border-neo-purple/20">
-                      <Label className="text-sm font-medium">Enhanced Prompt:</Label>
-                      <p className="text-sm text-muted-foreground mt-1">{enhancedPrompt}</p>
+                  <div className="space-y-2">
+                    <Label htmlFor="image-count">Number of Images</Label>
+                    <div className="flex items-center gap-4">
+                      <Input
+                        id="image-count"
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={imageCount}
+                        onChange={(e) => setImageCount(Math.max(1, Math.min(10, parseInt(e.target.value) || 1)))}
+                        className="w-20"
+                      />
+                      <Badge variant="outline">{imageCount} image{imageCount !== 1 ? 's' : ''}</Badge>
                     </div>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
 
               {/* Platform Selection */}
               <Card className="neo-card">
                 <CardHeader>
-                  <CardTitle>Target Platforms</CardTitle>
+                  <CardTitle>Target Platforms & Accounts</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
-                    {platformOptions.map((platform) => (
-                      <div key={platform.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={platform.id}
-                          checked={platforms.includes(platform.id)}
-                          onCheckedChange={(checked) => 
-                            handlePlatformChange(platform.id, checked as boolean)
-                          }
-                        />
-                        <Label htmlFor={platform.id}>{platform.name}</Label>
+                <CardContent className="space-y-4">
+                  {connectedPlatforms.map((platform) => {
+                    const isSelected = selectedPlatforms.some(p => p.platformId === platform.id);
+                    const selectedPlatform = selectedPlatforms.find(p => p.platformId === platform.id);
+                    
+                    return (
+                      <div key={platform.id} className="space-y-3 p-4 border rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <Checkbox
+                            id={platform.id}
+                            checked={isSelected}
+                            onCheckedChange={(checked) => 
+                              handlePlatformToggle(platform.id, checked as boolean)
+                            }
+                          />
+                          <span className="text-2xl">{platform.icon}</span>
+                          <Label htmlFor={platform.id} className="font-medium">{platform.name}</Label>
+                        </div>
+                        
+                        {isSelected && platform.accounts.length > 0 && (
+                          <div className="ml-6 space-y-2">
+                            <Label className="text-sm text-muted-foreground">Select accounts:</Label>
+                            {platform.accounts.map((account) => (
+                              <div key={account.id} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`${platform.id}-${account.id}`}
+                                  checked={selectedPlatform?.accountIds.includes(account.id) || false}
+                                  onCheckedChange={(checked) => 
+                                    handleAccountToggle(platform.id, account.id, checked as boolean)
+                                  }
+                                />
+                                <Label 
+                                  htmlFor={`${platform.id}-${account.id}`}
+                                  className="text-sm"
+                                >
+                                  {account.username}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </CardContent>
               </Card>
 
@@ -427,171 +405,132 @@ const CreateSlideshow = () => {
                   </div>
 
                   {isScheduled && (
-                    <div className="space-y-4 pl-6 border-l-2 border-neo-purple/20">
+                    <div className="space-y-6 pl-6 border-l-2 border-neo-purple/20">
                       <div className="space-y-2">
-                        <Label htmlFor="scheduled-time">When to run</Label>
-                        <Input
-                          id="scheduled-time"
-                          type="datetime-local"
-                          value={scheduledTime}
-                          onChange={(e) => setScheduledTime(e.target.value)}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="frequency">Frequency</Label>
-                        <Select value={scheduleFrequency} onValueChange={setScheduleFrequency}>
+                        <Label htmlFor="timezone">Timezone</Label>
+                        <Select value={timezone} onValueChange={setTimezone}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {frequencyOptions.map((option) => (
-                              <SelectItem key={option.id} value={option.id}>
-                                {option.name}
-                              </SelectItem>
-                            ))}
+                            <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
+                            <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
+                            <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
+                            <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
+                            <SelectItem value="Europe/London">London (GMT)</SelectItem>
+                            <SelectItem value="Europe/Paris">Paris (CET)</SelectItem>
+                            <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
+                            <SelectItem value="Asia/Shanghai">Shanghai (CST)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
+
+                      <div className="space-y-4">
+                        <Label>Weekly Schedule</Label>
+                        {weekSchedule.map((day, dayIndex) => (
+                          <div key={day.day} className="space-y-3 p-4 border rounded-lg">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`day-${dayIndex}`}
+                                  checked={day.enabled}
+                                  onCheckedChange={(checked) => 
+                                    handleDayToggle(dayIndex, checked as boolean)
+                                  }
+                                />
+                                <Label htmlFor={`day-${dayIndex}`} className="font-medium">
+                                  {day.day}
+                                </Label>
+                              </div>
+                              
+                              {day.enabled && (
+                                <div className="flex items-center space-x-2">
+                                  <Label className="text-sm">Posts per day:</Label>
+                                  <Select 
+                                    value={day.frequency.toString()} 
+                                    onValueChange={(value) => handleFrequencyChange(dayIndex, parseInt(value))}
+                                  >
+                                    <SelectTrigger className="w-16">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {[1, 2, 3, 4, 5].map(num => (
+                                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {day.enabled && (
+                              <div className="ml-6 space-y-2">
+                                <Label className="text-sm text-muted-foreground">Post times:</Label>
+                                <div className="grid grid-cols-2 gap-2">
+                                  {day.times.map((timeSlot, timeIndex) => (
+                                    <div key={timeSlot.id} className="flex items-center space-x-2">
+                                      <Clock className="h-4 w-4 text-muted-foreground" />
+                                      <Input
+                                        type="time"
+                                        value={timeSlot.time}
+                                        onChange={(e) => handleTimeChange(dayIndex, timeIndex, e.target.value)}
+                                        className="w-32"
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
-                </CardContent>
-              </Card>
-
-              {/* Generation Settings */}
-              <Card className="neo-card">
-                <CardHeader>
-                  <CardTitle>Generation Settings</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Image Count */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Label>Number of Images</Label>
-                      <Badge variant="outline">{imageCount[0]} images</Badge>
-                    </div>
-                    <Slider
-                      value={imageCount}
-                      onValueChange={setImageCount}
-                      max={12}
-                      min={3}
-                      step={1}
-                      className="w-full"
-                    />
-                  </div>
-
-                  {/* AI Model Selection */}
-                  <div className="space-y-4">
-                    <Label>AI Model</Label>
-                    <RadioGroup value={model} onValueChange={setModel}>
-                      {models.map((m) => (
-                        <div key={m.id} className="flex items-center space-x-2">
-                          <RadioGroupItem value={m.id} id={m.id} />
-                          <Label htmlFor={m.id} className="flex items-center gap-2 flex-1">
-                            {m.icon}
-                            <span>{m.name}</span>
-                            {m.isHot && <Badge variant="destructive" className="text-xs">HOT</Badge>}
-                            <Badge variant="secondary" className="ml-auto text-xs">
-                              {m.credits} credit{m.credits > 1 ? 's' : ''}/image
-                            </Badge>
-                          </Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  </div>
-
-                  {/* Resolution */}
-                  <div className="space-y-4">
-                    <Label>Resolution</Label>
-                    <RadioGroup value={resolution} onValueChange={setResolution}>
-                      {resolutions.map((res) => (
-                        <div key={res.id} className="flex items-center space-x-2">
-                          <RadioGroupItem value={res.id} id={res.id} />
-                          <Label htmlFor={res.id} className="flex items-center justify-between flex-1">
-                            <span>{res.name}</span>
-                            <span className="text-sm text-muted-foreground">{res.size}</span>
-                          </Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  </div>
-
-                  {/* Draft Toggle */}
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="draft"
-                      checked={isDraft}
-                      onCheckedChange={setIsDraft}
-                    />
-                    <Label htmlFor="draft">Save as draft (don't publish to platforms)</Label>
-                  </div>
                 </CardContent>
               </Card>
             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">
-              <CreditMeter availableCredits={availableCredits} usedThisMonth={usedThisMonth} />
-
-              {/* Generation Summary */}
+              <CreditMeter 
+                availableCredits={availableCredits} 
+                usedThisMonth={0} 
+              />
+              
               <Card className="neo-card">
                 <CardHeader>
-                  <CardTitle>Generation Summary</CardTitle>
+                  <CardTitle>Generation Cost</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Images:</span>
-                      <span>{imageCount[0]}</span>
+                      <span>{imageCount} × 1 credit</span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Model:</span>
-                      <span>{selectedModel?.name}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Resolution:</span>
-                      <span>{resolutions.find(r => r.id === resolution)?.name}</span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between font-medium">
-                      <span>Total Credits:</span>
-                      <span>{totalCredits}</span>
+                    <div className="flex justify-between font-medium border-t pt-2">
+                      <span>Total:</span>
+                      <span>{totalCredits} credits</span>
                     </div>
                   </div>
-
-                  {!canAfford(totalCredits) && (
-                    <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                      <AlertTriangle className="h-4 w-4 text-destructive" />
-                      <span className="text-sm text-destructive">
-                        Insufficient credits ({availableCredits} available)
-                      </span>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
 
-              {/* Action Buttons */}
               <div className="space-y-3">
                 <Button
                   onClick={handleSaveDraft}
-                  disabled={!canSaveDraft || isSaving}
                   variant="outline"
-                  size="lg"
+                  disabled={!canSaveDraft || isSaving}
                   className="w-full"
                 >
-                  <Save className="mr-2 h-4 w-4" />
-                  {isSaving ? 'Saving...' : editingId ? 'Update Scenario' : 'Save Draft'}
+                  {isSaving ? 'Saving...' : 'Save as Draft'}
                 </Button>
-
+                
                 <Button
                   onClick={handleGenerate}
                   disabled={!canGenerate || isGenerating}
-                  variant="hero"
-                  size="lg"
                   className="w-full"
                 >
-                  <Zap className="mr-2 h-4 w-4" />
-                  {isGenerating ? 'Generating...' : `Generate Now (${totalCredits} credits)`}
+                  {isGenerating ? 'Generating...' : 'Generate Content'}
                 </Button>
               </div>
             </div>
