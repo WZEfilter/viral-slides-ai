@@ -49,6 +49,7 @@ const CreateSlideshow = () => {
   const [imageCount, setImageCount] = useState(5);
   const [selectedPlatforms, setSelectedPlatforms] = useState<PlatformSelection[]>([]);
   const [isScheduled, setIsScheduled] = useState(false);
+  const [publishOption, setPublishOption] = useState<'draft' | 'publish'>('draft');
   const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [weekSchedule, setWeekSchedule] = useState<DaySchedule[]>([
     { day: 'Monday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
@@ -111,38 +112,12 @@ const CreateSlideshow = () => {
           is_scheduled: isScheduled,
         };
         saveDraft(draftData);
-      }, 1000); // Debounce for 1 second
+      }, 2000); // Increase debounce to 2 seconds
 
       return () => clearTimeout(timeoutId);
     }
-  }, [title, prompt, selectedPlatforms, isScheduled, editingId]);
+  }, [title, prompt, selectedPlatforms, isScheduled]);
 
-  const handlePlatformToggle = (platformId: string, checked: boolean) => {
-    if (checked) {
-      const platform = connectedPlatforms.find(p => p.id === platformId);
-      if (platform && platform.accounts.length > 0) {
-        setSelectedPlatforms([...selectedPlatforms, {
-          platformId,
-          accountIds: [platform.accounts[0].id] // Default to first account
-        }]);
-      }
-    } else {
-      setSelectedPlatforms(selectedPlatforms.filter(p => p.platformId !== platformId));
-    }
-  };
-
-  const handleAccountToggle = (platformId: string, accountId: string, checked: boolean) => {
-    setSelectedPlatforms(selectedPlatforms.map(platform => {
-      if (platform.platformId === platformId) {
-        if (checked) {
-          return { ...platform, accountIds: [...platform.accountIds, accountId] };
-        } else {
-          return { ...platform, accountIds: platform.accountIds.filter(id => id !== accountId) };
-        }
-      }
-      return platform;
-    }));
-  };
 
   const handleDayToggle = (dayIndex: number, enabled: boolean) => {
     setWeekSchedule(schedule => schedule.map((day, index) => 
@@ -245,7 +220,8 @@ const CreateSlideshow = () => {
           imageCount,
           platforms: selectedPlatforms.map(p => p.platformId),
           title,
-          scenarioId
+          scenarioId,
+          publishOption
         }
       });
 
@@ -347,35 +323,53 @@ const CreateSlideshow = () => {
                   <CardTitle>Target Platforms & Accounts</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {connectedPlatforms.map((platform) => {
-                    const isSelected = selectedPlatforms.some(p => p.platformId === platform.id);
-                    const selectedPlatform = selectedPlatforms.find(p => p.platformId === platform.id);
-                    
-                    return (
-                      <div key={platform.id} className="space-y-3 p-4 border rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <Checkbox
-                            id={platform.id}
-                            checked={isSelected}
-                            onCheckedChange={(checked) => 
-                              handlePlatformToggle(platform.id, checked as boolean)
-                            }
-                          />
-                          <span className="text-2xl">{platform.icon}</span>
-                          <Label htmlFor={platform.id} className="font-medium">{platform.name}</Label>
-                        </div>
-                        
-                        {isSelected && platform.accounts.length > 0 && (
-                          <div className="ml-6 space-y-2">
-                            <Label className="text-sm text-muted-foreground">Select accounts:</Label>
-                            {platform.accounts.map((account) => (
+                  {connectedPlatforms.map((platform) => (
+                    <div key={platform.id} className="space-y-3 p-4 border rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-2xl">{platform.icon}</span>
+                        <Label className="font-medium">{platform.name}</Label>
+                      </div>
+                      
+                      {platform.accounts.length > 0 && (
+                        <div className="ml-11 space-y-2">
+                          <Label className="text-sm text-muted-foreground">Select accounts:</Label>
+                          {platform.accounts.map((account) => {
+                            const isSelected = selectedPlatforms.some(p => 
+                              p.platformId === platform.id && p.accountIds.includes(account.id)
+                            );
+                            
+                            return (
                               <div key={account.id} className="flex items-center space-x-2">
                                 <Checkbox
                                   id={`${platform.id}-${account.id}`}
-                                  checked={selectedPlatform?.accountIds.includes(account.id) || false}
-                                  onCheckedChange={(checked) => 
-                                    handleAccountToggle(platform.id, account.id, checked as boolean)
-                                  }
+                                  checked={isSelected}
+                                  onCheckedChange={(checked) => {
+                                    if (checked) {
+                                      const existingPlatform = selectedPlatforms.find(p => p.platformId === platform.id);
+                                      if (existingPlatform) {
+                                        setSelectedPlatforms(selectedPlatforms.map(p => 
+                                          p.platformId === platform.id 
+                                            ? { ...p, accountIds: [...p.accountIds, account.id] }
+                                            : p
+                                        ));
+                                      } else {
+                                        setSelectedPlatforms([...selectedPlatforms, {
+                                          platformId: platform.id,
+                                          accountIds: [account.id]
+                                        }]);
+                                      }
+                                    } else {
+                                      setSelectedPlatforms(selectedPlatforms.map(p => {
+                                        if (p.platformId === platform.id) {
+                                          const newAccountIds = p.accountIds.filter(id => id !== account.id);
+                                          return newAccountIds.length > 0 
+                                            ? { ...p, accountIds: newAccountIds }
+                                            : null;
+                                        }
+                                        return p;
+                                      }).filter(Boolean) as PlatformSelection[]);
+                                    }
+                                  }}
                                 />
                                 <Label 
                                   htmlFor={`${platform.id}-${account.id}`}
@@ -384,12 +378,12 @@ const CreateSlideshow = () => {
                                   {account.username}
                                 </Label>
                               </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
 
@@ -519,6 +513,40 @@ const CreateSlideshow = () => {
                 </CardContent>
               </Card>
 
+              <Card className="neo-card">
+                <CardHeader>
+                  <CardTitle>Publish Options</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="publish-draft"
+                        name="publishOption"
+                        value="draft"
+                        checked={publishOption === 'draft'}
+                        onChange={(e) => setPublishOption(e.target.value as 'draft' | 'publish')}
+                        className="w-4 h-4"
+                      />
+                      <Label htmlFor="publish-draft">Save as Draft Post</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="publish-live"
+                        name="publishOption"
+                        value="publish"
+                        checked={publishOption === 'publish'}
+                        onChange={(e) => setPublishOption(e.target.value as 'draft' | 'publish')}
+                        className="w-4 h-4"
+                      />
+                      <Label htmlFor="publish-live">Publish Immediately</Label>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               <div className="space-y-3">
                 <Button
                   onClick={handleSaveDraft}
@@ -526,7 +554,7 @@ const CreateSlideshow = () => {
                   disabled={!canSaveDraft || isSaving}
                   className="w-full"
                 >
-                  {isSaving ? 'Saving...' : 'Save as Draft'}
+                  {isSaving ? 'Saving...' : 'Save Scenario as Draft'}
                 </Button>
                 
                 <Button
@@ -534,7 +562,7 @@ const CreateSlideshow = () => {
                   disabled={!canGenerate || isGenerating}
                   className="w-full"
                 >
-                  {isGenerating ? 'Generating...' : 'Generate Content'}
+                  {isGenerating ? 'Generating...' : `${publishOption === 'draft' ? 'Generate Draft' : 'Generate & Publish'}`}
                 </Button>
               </div>
             </div>
