@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Calendar, TrendingUp, Users, Zap } from "lucide-react";
+import { Plus, Calendar, TrendingUp, Users, Zap, FolderOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { useProfile } from "@/hooks/useProfile";
@@ -19,10 +19,10 @@ const Dashboard = () => {
     { label: "Platforms", value: "3", icon: Users, color: "accent" },
   ];
 
-  const recentPosts = [
-    { id: 1, title: "Tech Innovation 2024", platform: "Instagram", status: "Published", date: "2 hours ago" },
-    { id: 2, title: "Business Growth Tips", platform: "TikTok", status: "Draft", date: "5 hours ago" },
-    { id: 3, title: "Motivational Quotes", platform: "Pinterest", status: "Scheduled", date: "1 day ago" },
+  const currentScenarios = [
+    { id: 1, title: "Tech Innovation Campaign", lastRun: "2 hours ago", scheduled: "Tomorrow 9:00 AM", status: "Scheduled" },
+    { id: 2, title: "Business Growth Series", lastRun: "Yesterday", scheduled: "Next run in 3 days", status: "Active" },
+    { id: 3, title: "Motivational Content", lastRun: null, scheduled: null, status: "Draft" },
   ];
 
   if (loading) {
@@ -77,30 +77,38 @@ const Dashboard = () => {
 
           {/* Content Grid */}
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Recent Posts */}
+            {/* Current Scenarios */}
             <div className="lg:col-span-2">
               <Card className="p-6 bg-gradient-card border border-neo-purple/20">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-foreground">Recent Posts</h2>
-                  <Link to="/library">
+                  <h2 className="text-xl font-semibold text-foreground">Current Scenarios</h2>
+                  <Link to="/my-scenarios">
                     <Button variant="ghost" size="sm">View all</Button>
                   </Link>
                 </div>
                 
                 <div className="space-y-4">
-                  {recentPosts.map((post) => (
-                    <div key={post.id} className="flex items-center justify-between p-4 bg-muted/10 rounded-lg border border-neo-purple/10">
-                      <div>
-                        <h3 className="font-semibold text-foreground">{post.title}</h3>
-                        <p className="text-sm text-muted-foreground">{post.platform} • {post.date}</p>
+                  {currentScenarios.map((scenario) => (
+                    <div key={scenario.id} className="flex items-center justify-between p-4 bg-muted/10 rounded-lg border border-neo-purple/10">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gradient-hero rounded flex items-center justify-center">
+                          <Calendar className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground">{scenario.title}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {scenario.lastRun ? `Last run ${scenario.lastRun}` : 'Not run yet'}
+                            {scenario.scheduled && ` • ${scenario.scheduled}`}
+                          </p>
+                        </div>
                       </div>
                       <div className="flex items-center space-x-3">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          post.status === 'Published' ? 'bg-green-500/20 text-green-400' :
-                          post.status === 'Draft' ? 'bg-yellow-500/20 text-yellow-400' :
-                          'bg-blue-500/20 text-blue-400'
+                          scenario.status === 'Scheduled' ? 'bg-blue-500/20 text-blue-400' :
+                          scenario.status === 'Active' ? 'bg-green-500/20 text-green-400' :
+                          'bg-yellow-500/20 text-yellow-400'
                         }`}>
-                          {post.status}
+                          {scenario.status}
                         </span>
                         <Button variant="ghost" size="sm">Edit</Button>
                       </div>
@@ -121,10 +129,10 @@ const Dashboard = () => {
                       New Slideshow
                     </Button>
                   </Link>
-                  <Link to="/library">
+                  <Link to="/my-scenarios">
                     <Button variant="ghost" className="w-full justify-start">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      View Library
+                      <FolderOpen className="mr-2 h-4 w-4" />
+                      My Scenarios
                     </Button>
                   </Link>
                   <Link to="/settings">

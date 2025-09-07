@@ -9,7 +9,7 @@ import PricingPage from "./pages/Pricing";
 import Dashboard from "./pages/Dashboard";
 import CreateSlideshow from "./pages/CreateSlideshow";
 import GenerationResults from "./pages/GenerationResults";
-import Library from "./pages/Library";
+import MyScenarios from "./pages/MyScenarios";
 import SettingsPage from "./pages/Settings";
 import Auth from "./pages/Auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -41,9 +41,14 @@ const App = () => (
               <GenerationResults />
             </ProtectedRoute>
           } />
+          <Route path="/my-scenarios" element={
+            <ProtectedRoute>
+              <MyScenarios />
+            </ProtectedRoute>
+          } />
           <Route path="/library" element={
             <ProtectedRoute>
-              <Library />
+              <MyScenarios />
             </ProtectedRoute>
           } />
           <Route path="/settings" element={

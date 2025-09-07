@@ -15,6 +15,12 @@ export interface Scenario {
   status: 'draft' | 'active' | 'paused' | 'completed';
   created_at: string;
   updated_at: string;
+  scheduled_time: string | null;
+  is_scheduled: boolean;
+  last_run_at: string | null;
+  schedule_frequency: string | null;
+  is_paused: boolean;
+  next_run_at: string | null;
 }
 
 export interface CreateScenarioData {
@@ -24,6 +30,9 @@ export interface CreateScenarioData {
   target_audience?: string;
   content_style?: string;
   platforms: string[];
+  scheduled_time?: string;
+  is_scheduled?: boolean;
+  schedule_frequency?: string;
 }
 
 export const useScenarios = () => {
@@ -164,6 +173,35 @@ export const useScenarios = () => {
     return scenarios.find(scenario => scenario.id === id);
   };
 
+  const getScheduledScenarios = (): Scenario[] => {
+    return scenarios.filter(scenario => scenario.is_scheduled && !scenario.is_paused);
+  };
+
+  const getUnscheduledScenarios = (): Scenario[] => {
+    return scenarios.filter(scenario => !scenario.is_scheduled);
+  };
+
+  const pauseScenario = async (id: string): Promise<boolean> => {
+    return updateScenario(id, { is_paused: true });
+  };
+
+  const resumeScenario = async (id: string): Promise<boolean> => {
+    return updateScenario(id, { is_paused: false });
+  };
+
+  const saveDraft = (draftData: Partial<CreateScenarioData>) => {
+    localStorage.setItem('scenario_draft', JSON.stringify(draftData));
+  };
+
+  const loadDraft = (): Partial<CreateScenarioData> | null => {
+    const draft = localStorage.getItem('scenario_draft');
+    return draft ? JSON.parse(draft) : null;
+  };
+
+  const clearDraft = () => {
+    localStorage.removeItem('scenario_draft');
+  };
+
   return {
     scenarios,
     loading,
@@ -171,6 +209,13 @@ export const useScenarios = () => {
     updateScenario,
     deleteScenario,
     getScenarioById,
+    getScheduledScenarios,
+    getUnscheduledScenarios,
+    pauseScenario,
+    resumeScenario,
+    saveDraft,
+    loadDraft,
+    clearDraft,
     refreshScenarios: loadScenarios
   };
 };

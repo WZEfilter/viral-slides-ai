@@ -231,8 +231,14 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          is_paused: boolean | null
+          is_scheduled: boolean | null
+          last_run_at: string | null
+          next_run_at: string | null
           niche: string
           platforms: string[] | null
+          schedule_frequency: string | null
+          scheduled_time: string | null
           status: string | null
           target_audience: string | null
           title: string
@@ -244,8 +250,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_paused?: boolean | null
+          is_scheduled?: boolean | null
+          last_run_at?: string | null
+          next_run_at?: string | null
           niche: string
           platforms?: string[] | null
+          schedule_frequency?: string | null
+          scheduled_time?: string | null
           status?: string | null
           target_audience?: string | null
           title: string
@@ -257,8 +269,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_paused?: boolean | null
+          is_scheduled?: boolean | null
+          last_run_at?: string | null
+          next_run_at?: string | null
           niche?: string
           platforms?: string[] | null
+          schedule_frequency?: string | null
+          scheduled_time?: string | null
           status?: string | null
           target_audience?: string | null
           title?: string
