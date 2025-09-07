@@ -30,7 +30,7 @@ const WorkflowSection = () => {
     <section className="py-20 bg-gradient-subtle">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 opacity-0 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             <span className="bg-gradient-hero bg-clip-text text-transparent">
               Your Path to Viral Success
@@ -44,11 +44,15 @@ const WorkflowSection = () => {
         {/* Workflow Steps */}
         <div className="grid md:grid-cols-4 gap-8 mb-20">
           {workflowSteps.map((step, index) => (
-            <div key={index} className="relative">
-              <Card className="bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all h-full">
+            <div 
+              key={index} 
+              className={`relative opacity-0 animate-fade-in-up`}
+              style={{ animationDelay: `${300 + (index * 150)}ms` }}
+            >
+              <Card className="bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all h-full hover:scale-105 hover:shadow-glow-primary">
                 <CardContent className="p-6 text-center">
                   <div className="mb-4 flex justify-center">
-                    <div className="p-3 rounded-full bg-gradient-hero">
+                    <div className="p-3 rounded-full bg-gradient-hero hover:scale-110 transition-transform duration-300">
                       <step.icon className="h-6 w-6 text-background" />
                     </div>
                   </div>
@@ -58,7 +62,7 @@ const WorkflowSection = () => {
               </Card>
               {index < workflowSteps.length - 1 && (
                 <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                  <ArrowRight className="h-6 w-6 text-neo-purple" />
+                  <ArrowRight className="h-6 w-6 text-neo-purple animate-pulse" />
                 </div>
               )}
             </div>
@@ -149,8 +153,8 @@ const WorkflowSection = () => {
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-16">
-          <Button variant="hero" size="lg" className="group">
+        <div className="text-center mt-16 opacity-0 animate-fade-in-up" style={{ animationDelay: '1000ms' }}>
+          <Button variant="hero" size="lg" className="group hover:scale-105 transition-all duration-300">
             Start earning today
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>

@@ -124,6 +124,79 @@ export default {
             boxShadow: "0 0 30px hsl(var(--neo-purple) / 0.6), 0 0 40px hsl(var(--neo-pink) / 0.3)",
           },
         },
+        // Scroll animations
+        "fade-in-up": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(30px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        "fade-in-down": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(-30px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        "fade-in-left": {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(-30px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(0)",
+          },
+        },
+        "fade-in-right": {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(30px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(0)",
+          },
+        },
+        "scale-in": {
+          "0%": {
+            opacity: "0",
+            transform: "scale(0.9)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+        },
+        "slide-up": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(50px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        "expand": {
+          "0%": {
+            opacity: "0",
+            transform: "scaleY(0)",
+            transformOrigin: "top",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "scaleY(1)",
+            transformOrigin: "top",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -131,6 +204,18 @@ export default {
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "float": "float 3s ease-in-out infinite",
         "glow": "glow 0.3s ease-out forwards",
+        // New scroll animations
+        "fade-in-up": "fade-in-up 0.6s ease-out forwards",
+        "fade-in-down": "fade-in-down 0.6s ease-out forwards",
+        "fade-in-left": "fade-in-left 0.6s ease-out forwards",
+        "fade-in-right": "fade-in-right 0.6s ease-out forwards",
+        "scale-in": "scale-in 0.5s ease-out forwards",
+        "slide-up": "slide-up 0.7s ease-out forwards",
+        "expand": "expand 0.4s ease-out forwards",
+        // Delayed variations
+        "fade-in-up-delay": "fade-in-up 0.6s ease-out 0.2s forwards",
+        "fade-in-up-delay-2": "fade-in-up 0.6s ease-out 0.4s forwards",
+        "fade-in-up-delay-3": "fade-in-up 0.6s ease-out 0.6s forwards",
       },
     },
   },

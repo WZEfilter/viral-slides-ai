@@ -359,6 +359,7 @@ const CreateSlideshow = () => {
                       placeholder="e.g., Daily Tech Updates"
                       value={title}
                       onChange={handleTitleChange}
+                      className="transition-all duration-300 focus:scale-[1.02] focus:shadow-glow-primary"
                     />
                   </div>
 
@@ -370,6 +371,7 @@ const CreateSlideshow = () => {
                       value={prompt}
                       onChange={handlePromptChange}
                       rows={4}
+                      className="transition-all duration-300 focus:scale-[1.02] focus:shadow-glow-primary"
                     />
                   </div>
 
@@ -419,7 +421,7 @@ const CreateSlideshow = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {connectedPlatforms.map((platform) => (
-                    <div key={platform.id} className="space-y-3 p-4 border rounded-lg">
+                    <div key={platform.id} className="space-y-3 p-4 border rounded-lg hover:border-neo-purple/40 transition-all duration-300 hover:shadow-glow-primary">
                       <div className="flex items-center space-x-3">
                         <span className="text-2xl">{platform.icon}</span>
                         <Label className="font-medium">{platform.name}</Label>
@@ -434,17 +436,18 @@ const CreateSlideshow = () => {
                             );
                             
                             return (
-                              <div key={account.id} className="flex items-center space-x-2">
+                              <div key={account.id} className="flex items-center space-x-2 hover:scale-105 transition-transform duration-200">
                                 <Checkbox
                                   id={`${platform.id}-${account.id}`}
                                   checked={isSelected}
                                   onCheckedChange={(checked) => 
                                     handlePlatformAccountToggle(platform.id, account.id, checked as boolean)
                                   }
+                                  className="transition-all duration-200"
                                 />
                                 <Label 
                                   htmlFor={`${platform.id}-${account.id}`}
-                                  className="text-sm"
+                                  className="text-sm cursor-pointer hover:text-neo-purple transition-colors duration-200"
                                 >
                                   {account.username}
                                 </Label>
@@ -630,7 +633,7 @@ const CreateSlideshow = () => {
                   onClick={handleSaveDraft}
                   variant="outline"
                   disabled={!canSaveDraft || isSaving}
-                  className="w-full"
+                  className="w-full hover:scale-105 transition-all duration-300"
                 >
                   {isSaving ? 'Saving...' : 'Save Scenario as Draft'}
                 </Button>
@@ -638,7 +641,7 @@ const CreateSlideshow = () => {
                 <Button
                   onClick={handleGenerate}
                   disabled={!canGenerate || isGenerating}
-                  className="w-full"
+                  className="w-full hover:scale-105 transition-all duration-300"
                 >
                   {isGenerating ? 'Generating...' : (isScheduled ? 'Schedule' : 'Run')}
                 </Button>
