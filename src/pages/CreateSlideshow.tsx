@@ -38,7 +38,7 @@ interface PlatformSelection {
 const CreateSlideshow = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { availableCredits, canAfford } = useCredits();
+  const { availableCredits, usedThisMonth, canAfford } = useCredits();
   const { createScenario, updateScenario, getScenarioById, saveDraft, loadDraft, clearDraft } = useScenarios();
   const { platforms, getConnectedPlatforms } = usePlatforms();
   const [searchParams] = useSearchParams();
@@ -494,7 +494,7 @@ const CreateSlideshow = () => {
             <div className="space-y-6">
               <CreditMeter 
                 availableCredits={availableCredits} 
-                usedThisMonth={0} 
+                usedThisMonth={usedThisMonth} 
               />
               
               <Card className="neo-card">
