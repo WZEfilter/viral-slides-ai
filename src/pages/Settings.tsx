@@ -67,7 +67,7 @@ const Settings = () => {
 
           {/* Settings Tabs */}
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-5">
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-4">
               <TabsTrigger value="profile" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Profile</span>
@@ -80,13 +80,9 @@ const Settings = () => {
                 <CreditCard className="h-4 w-4" />
                 <span className="hidden sm:inline">Billing</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="flex items-center gap-2">
-                <Bell className="h-4 w-4" />
-                <span className="hidden sm:inline">Notifications</span>
-              </TabsTrigger>
-              <TabsTrigger value="security" className="flex items-center gap-2 hidden lg:flex">
+              <TabsTrigger value="security" className="flex items-center gap-2">
                 <Shield className="h-4 w-4" />
-                Security
+                <span className="hidden sm:inline">Security</span>
               </TabsTrigger>
             </TabsList>
 
@@ -219,68 +215,6 @@ const Settings = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="notifications" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bell className="h-5 w-5" />
-                    Notification Preferences
-                  </CardTitle>
-                  <CardDescription>
-                    Choose how you want to be notified about account activity
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium text-foreground">Email Notifications</h4>
-                        <p className="text-sm text-muted-foreground">Receive notifications via email</p>
-                      </div>
-                      <Switch
-                        checked={notifications.email}
-                        onCheckedChange={(checked) => setNotifications(prev => ({ ...prev, email: checked }))}
-                      />
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium text-foreground">Push Notifications</h4>
-                        <p className="text-sm text-muted-foreground">Receive push notifications in your browser</p>
-                      </div>
-                      <Switch
-                        checked={notifications.push}
-                        onCheckedChange={(checked) => setNotifications(prev => ({ ...prev, push: checked }))}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium text-foreground">SMS Notifications</h4>
-                        <p className="text-sm text-muted-foreground">Receive important updates via SMS</p>
-                      </div>
-                      <Switch
-                        checked={notifications.sms}
-                        onCheckedChange={(checked) => setNotifications(prev => ({ ...prev, sms: checked }))}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium text-foreground">Marketing Communications</h4>
-                        <p className="text-sm text-muted-foreground">Receive updates about new features and offers</p>
-                      </div>
-                      <Switch
-                        checked={notifications.marketing}
-                        onCheckedChange={(checked) => setNotifications(prev => ({ ...prev, marketing: checked }))}
-                      />
-                    </div>
-                  </div>
-
-                  <Button className="w-full md:w-auto">Save Preferences</Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
             <TabsContent value="security" className="space-y-6">
               <Card>

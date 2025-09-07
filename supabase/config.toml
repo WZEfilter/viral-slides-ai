@@ -32,3 +32,12 @@ verify_jwt = false
 
 [functions.serve-asset]
 verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = true
+
+[functions.check-subscription]
+verify_jwt = true
+
+[functions.customer-portal]
+verify_jwt = true

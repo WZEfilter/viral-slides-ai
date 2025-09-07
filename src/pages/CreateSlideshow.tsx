@@ -188,16 +188,6 @@ const CreateSlideshow = () => {
                   )}
                 </div>
 
-                {/* Tags */}
-                <div className="space-y-2">
-                  <Label htmlFor="tags">Tags (comma-separated)</Label>
-                  <Input
-                    id="tags"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                    placeholder="technology, business, social media..."
-                  />
-                </div>
 
                 <Separator />
 

@@ -204,9 +204,13 @@ export const ProfileSettings = () => {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="Enter your email"
+                disabled
+                placeholder="Email cannot be changed"
+                className="bg-muted cursor-not-allowed"
               />
+              <p className="text-sm text-muted-foreground">
+                Email cannot be changed for security and billing purposes
+              </p>
             </div>
           </div>
 
@@ -264,7 +268,11 @@ export const ProfileSettings = () => {
             <Button variant="outline" className="flex-1">
               View Usage History
             </Button>
-            <Button variant="hero" className="flex-1">
+            <Button 
+              variant="hero" 
+              className="flex-1"
+              onClick={() => window.open('/pricing', '_blank')}
+            >
               Upgrade Plan
             </Button>
           </div>
