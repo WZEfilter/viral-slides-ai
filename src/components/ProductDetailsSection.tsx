@@ -90,7 +90,7 @@ const ProductDetailsSection = () => {
           {features.map((feature, index) => (
             <Card 
               key={index} 
-              className={`bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all group hover:scale-105 duration-700 ${
+              className={`bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 hover:scale-105 hover:shadow-glow-primary transition-all duration-300 ${
                 featuresVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
               style={{ 
@@ -99,7 +99,7 @@ const ProductDetailsSection = () => {
             >
               <CardContent className="p-6">
                 <div className="mb-4">
-                  <div className="p-3 rounded-full bg-gradient-hero w-fit group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-3 rounded-full bg-gradient-hero w-fit hover:scale-110 transition-transform duration-300">
                     <feature.icon className="h-6 w-6 text-background" />
                   </div>
                 </div>
