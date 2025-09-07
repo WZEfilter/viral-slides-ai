@@ -43,7 +43,7 @@ export const RadioGroupItem: React.FC<RadioGroupItemProps & {
         value={value}
         checked={checked}
         onChange={onChange}
-        className="h-4 w-4 border border-input bg-background text-primary focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        className="h-4 w-4 border border-input bg-background text-primary focus:ring-0 focus:outline-none"
       />
       <label htmlFor={id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
         {children}
