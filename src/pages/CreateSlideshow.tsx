@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group-fixed';
+import { TimePicker } from '@/components/ui/time-picker';
 import { CreditMeter } from '@/components/CreditMeter';
 import { ArrowLeft, Plus, X, Clock, Calendar } from 'lucide-react';
 import { useCredits } from '@/hooks/useCredits';
@@ -51,6 +53,7 @@ const CreateSlideshow = () => {
   const [selectedPlatforms, setSelectedPlatforms] = useState<PlatformSelection[]>([]);
   const [isScheduled, setIsScheduled] = useState(false);
   const [publishOption, setPublishOption] = useState<'draft' | 'publish'>('draft');
+  const [aiModel, setAiModel] = useState('gpt-4o-mini');
   const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [weekSchedule, setWeekSchedule] = useState<DaySchedule[]>([
     { day: 'Monday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
@@ -68,6 +71,12 @@ const CreateSlideshow = () => {
   const totalCredits = imageCount * 1;
   const canGenerate = title.trim() && prompt.trim() && canAfford(totalCredits) && selectedPlatforms.length > 0;
   const canSaveDraft = title.trim() && prompt.trim();
+  
+  // Calculate usage cost estimation
+  const enabledDays = weekSchedule.filter(day => day.enabled);
+  const totalPostsPerWeek = enabledDays.reduce((total, day) => total + day.frequency, 0);
+  const creditsPerWeek = totalPostsPerWeek * totalCredits;
+  const creditsPerMonth = creditsPerWeek * 4.33; // Average weeks per month
 
   // Load draft on mount and handle editing scenario
   useEffect(() => {
@@ -141,6 +150,10 @@ const CreateSlideshow = () => {
 
   const handlePublishOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPublishOption(e.target.value as 'draft' | 'publish');
+  };
+
+  const handlePublishOptionSelect = (value: string) => {
+    setPublishOption(value as 'draft' | 'publish');
   };
 
   const handlePlatformAccountToggle = (platformId: string, accountId: string, checked: boolean) => {
@@ -271,7 +284,8 @@ const CreateSlideshow = () => {
           platforms: selectedPlatforms.map(p => p.platformId),
           title,
           scenarioId,
-          publishOption
+          publishOption,
+          aiModel
         }
       });
 
@@ -363,6 +377,21 @@ const CreateSlideshow = () => {
                       />
                       <Badge variant="outline">{imageCount} image{imageCount !== 1 ? 's' : ''}</Badge>
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="ai-model">AI Model</Label>
+                    <Select value={aiModel} onValueChange={setAiModel}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="gpt-4o-mini">GPT-4o Mini (Fast & Cost-effective)</SelectItem>
+                        <SelectItem value="gpt-4o">GPT-4o (Premium Quality)</SelectItem>
+                        <SelectItem value="gpt-5-mini-2025-08-07">GPT-5 Mini (Latest & Efficient)</SelectItem>
+                        <SelectItem value="gpt-5-2025-08-07">GPT-5 (Flagship Model)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </CardContent>
               </Card>
@@ -543,33 +572,15 @@ const CreateSlideshow = () => {
                 <CardHeader>
                   <CardTitle>Publish Options</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id="publish-draft"
-                        name="publishOption"
-                        value="draft"
-                        checked={publishOption === 'draft'}
-                        onChange={handlePublishOptionChange}
-                        className="w-4 h-4"
-                      />
-                      <Label htmlFor="publish-draft">Save as Draft Post</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id="publish-live"
-                        name="publishOption"
-                        value="publish"
-                        checked={publishOption === 'publish'}
-                        onChange={handlePublishOptionChange}
-                        className="w-4 h-4"
-                      />
-                      <Label htmlFor="publish-live">Publish Immediately</Label>
-                    </div>
-                  </div>
+                 <CardContent className="space-y-4">
+                  <RadioGroup value={publishOption} onValueChange={handlePublishOptionSelect}>
+                    <RadioGroupItem value="draft" id="publish-draft">
+                      Save as Draft Post
+                    </RadioGroupItem>
+                    <RadioGroupItem value="publish" id="publish-live">
+                      Publish Immediately
+                    </RadioGroupItem>
+                  </RadioGroup>
                 </CardContent>
               </Card>
 
