@@ -53,7 +53,7 @@ const CreateSlideshow = () => {
   const [selectedPlatforms, setSelectedPlatforms] = useState<PlatformSelection[]>([]);
   const [isScheduled, setIsScheduled] = useState(false);
   const [publishOption, setPublishOption] = useState<'draft' | 'publish'>('draft');
-  const [aiModel, setAiModel] = useState('gpt-4o-mini');
+  const [aiModel, setAiModel] = useState('flux-kontext-max');
   const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [weekSchedule, setWeekSchedule] = useState<DaySchedule[]>([
     { day: 'Monday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
@@ -68,11 +68,21 @@ const CreateSlideshow = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const connectedPlatforms = getConnectedPlatforms();
-  const totalCredits = imageCount * 1;
+  
+  // AI Model configurations with credit costs
+  const aiModels = [
+    { id: 'flux-kontext-max', name: 'Flux.1 Kontext Max', credits: 2, isHot: true, isDefault: true },
+    { id: 'flux-kontext-pro', name: 'Flux.1 Kontext Pro', credits: 1, isHot: true, isDefault: false },
+    { id: 'flux-1.1-pro', name: 'Flux 1.1 Pro', credits: 1, isHot: false, isDefault: false },
+    { id: 'flux-1.1-ultra', name: 'Flux 1.1 Ultra', credits: 1.5, isHot: false, isDefault: false },
+  ];
+  
+  const selectedModelConfig = aiModels.find(model => model.id === aiModel) || aiModels[0];
+  const totalCredits = imageCount * selectedModelConfig.credits;
   const canGenerate = title.trim() && prompt.trim() && canAfford(totalCredits) && selectedPlatforms.length > 0;
   const canSaveDraft = title.trim() && prompt.trim();
   
-  // Calculate usage cost estimation
+  // Calculate usage cost estimation based on frequency and model selection
   const enabledDays = weekSchedule.filter(day => day.enabled);
   const totalPostsPerWeek = enabledDays.reduce((total, day) => total + day.frequency, 0);
   const creditsPerWeek = totalPostsPerWeek * totalCredits;
@@ -386,10 +396,16 @@ const CreateSlideshow = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="gpt-4o-mini">GPT-4o Mini (Fast & Cost-effective)</SelectItem>
-                        <SelectItem value="gpt-4o">GPT-4o (Premium Quality)</SelectItem>
-                        <SelectItem value="gpt-5-mini-2025-08-07">GPT-5 Mini (Latest & Efficient)</SelectItem>
-                        <SelectItem value="gpt-5-2025-08-07">GPT-5 (Flagship Model)</SelectItem>
+                        {aiModels.map((model) => (
+                          <SelectItem key={model.id} value={model.id}>
+                            <div className="flex items-center gap-2">
+                              <span>{model.name}</span>
+                              <Badge variant="secondary">{model.credits} credits</Badge>
+                              {model.isHot && <Badge variant="destructive" className="text-xs">🔥 Hot</Badge>}
+                              {model.isDefault && <Badge variant="outline" className="text-xs">Default</Badge>}
+                            </div>
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -548,6 +564,11 @@ const CreateSlideshow = () => {
               <CreditMeter 
                 availableCredits={availableCredits} 
                 usedThisMonth={usedThisMonth} 
+                estimatedUsage={{
+                  images: imageCount,
+                  model: selectedModelConfig.name,
+                  totalCredits: totalCredits
+                }}
               />
               
               <Card className="neo-card">
@@ -555,15 +576,35 @@ const CreateSlideshow = () => {
                   <CardTitle>Generation Cost</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Images:</span>
-                      <span>{imageCount} × 1 credit</span>
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Model:</span>
+                        <span>{selectedModelConfig.name}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Images:</span>
+                        <span>{imageCount} × {selectedModelConfig.credits} credits</span>
+                      </div>
+                      <div className="flex justify-between font-medium border-t pt-2">
+                        <span>Per Generation:</span>
+                        <span>{totalCredits} credits</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between font-medium border-t pt-2">
-                      <span>Total:</span>
-                      <span>{totalCredits} credits</span>
-                    </div>
+                    
+                    {isScheduled && totalPostsPerWeek > 0 && (
+                      <div className="space-y-2 border-t pt-3">
+                        <div className="text-sm font-medium text-muted-foreground">Frequency Cost:</div>
+                        <div className="flex justify-between text-sm">
+                          <span>Per Week:</span>
+                          <span>{creditsPerWeek.toFixed(1)} credits</span>
+                        </div>
+                        <div className="flex justify-between text-sm font-medium">
+                          <span>Per Month:</span>
+                          <span>{creditsPerMonth.toFixed(0)} credits</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
