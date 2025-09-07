@@ -188,27 +188,23 @@ const Settings = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="font-medium text-foreground">Payment Method</h4>
-                    <div className="flex items-center justify-between p-4 border border-neo-purple/20 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-hero rounded flex items-center justify-center">
-                          <CreditCard className="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-foreground">No payment method</p>
-                          <p className="text-sm text-muted-foreground">Add a payment method to upgrade</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">Add Card</Button>
+                    <h4 className="font-medium text-foreground">Current Plan</h4>
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Crown className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                      <p className="font-medium">Free Plan</p>
+                      <p className="text-sm">100 credits per month</p>
+                      <Button variant="hero" className="mt-4">
+                        Upgrade Plan
+                      </Button>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="font-medium text-foreground">Billing History</h4>
+                    <h4 className="font-medium text-foreground">Usage Statistics</h4>
                     <div className="text-center py-8 text-muted-foreground">
                       <CreditCard className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                      <p>No billing history available</p>
-                      <p className="text-sm">Upgrade to a paid plan to see your billing history</p>
+                      <p>No usage data available</p>
+                      <p className="text-sm">Start creating content to see your usage statistics</p>
                     </div>
                   </div>
                 </CardContent>

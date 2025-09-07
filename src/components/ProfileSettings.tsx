@@ -268,11 +268,7 @@ export const ProfileSettings = () => {
             <Button variant="outline" className="flex-1">
               View Usage History
             </Button>
-            <Button 
-              variant="hero" 
-              className="flex-1"
-              onClick={() => window.open('/pricing', '_blank')}
-            >
+            <Button variant="hero" className="flex-1">
               Upgrade Plan
             </Button>
           </div>
