@@ -107,16 +107,16 @@ const CreateSlideshow = () => {
         const draftData = {
           title,
           description: prompt,
-          niche: 'general', // Default niche
+          niche: 'general',
           platforms: selectedPlatforms.map(p => p.platformId),
           is_scheduled: isScheduled,
         };
         saveDraft(draftData);
-      }, 2000); // Increase debounce to 2 seconds
+      }, 5000); // Longer debounce to prevent interference
 
       return () => clearTimeout(timeoutId);
     }
-  }, [title, prompt, selectedPlatforms, isScheduled]);
+  }, [title, prompt, selectedPlatforms, isScheduled, editingId, saveDraft]);
 
 
   const handleDayToggle = (dayIndex: number, enabled: boolean) => {
