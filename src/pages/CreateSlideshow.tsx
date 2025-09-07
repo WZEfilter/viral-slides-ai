@@ -640,7 +640,7 @@ const CreateSlideshow = () => {
                   disabled={!canGenerate || isGenerating}
                   className="w-full"
                 >
-                  {isGenerating ? 'Generating...' : `${publishOption === 'draft' ? 'Generate Draft' : 'Generate & Publish'}`}
+                  {isGenerating ? 'Generating...' : (isScheduled ? 'Schedule' : 'Run')}
                 </Button>
               </div>
             </div>
