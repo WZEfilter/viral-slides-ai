@@ -1,8 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, DollarSign, Image, Play, Settings, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 const WorkflowSection = () => {
+  const { elementRef: headerRef, isVisible: headerVisible } = useIntersectionObserver();
+  const { elementRef: stepsRef, isVisible: stepsVisible } = useIntersectionObserver();
+  const { elementRef: ctaRef, isVisible: ctaVisible } = useIntersectionObserver();
+
   const workflowSteps = [
     {
       icon: Settings,
@@ -30,7 +35,12 @@ const WorkflowSection = () => {
     <section className="py-20 bg-gradient-subtle">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16 opacity-0 animate-fade-in-up">
+        <div 
+          ref={headerRef}
+          className={`text-center mb-16 transition-all duration-700 ${
+            headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             <span className="bg-gradient-hero bg-clip-text text-transparent">
               Your Path to Viral Success
@@ -42,12 +52,19 @@ const WorkflowSection = () => {
         </div>
 
         {/* Workflow Steps */}
-        <div className="grid md:grid-cols-4 gap-8 mb-20">
+        <div 
+          ref={stepsRef}
+          className="grid md:grid-cols-4 gap-8 mb-20"
+        >
           {workflowSteps.map((step, index) => (
             <div 
               key={index} 
-              className={`relative opacity-0 animate-fade-in-up`}
-              style={{ animationDelay: `${300 + (index * 150)}ms` }}
+              className={`relative transition-all duration-700 ${
+                stepsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ 
+                transitionDelay: stepsVisible ? `${index * 150}ms` : '0ms'
+              }}
             >
               <Card className="bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all h-full hover:scale-105 hover:shadow-glow-primary">
                 <CardContent className="p-6 text-center">
@@ -153,7 +170,12 @@ const WorkflowSection = () => {
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-16 opacity-0 animate-fade-in-up" style={{ animationDelay: '1000ms' }}>
+        <div 
+          ref={ctaRef}
+          className={`text-center mt-16 transition-all duration-700 ${
+            ctaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
           <Button variant="hero" size="lg" className="group hover:scale-105 transition-all duration-300">
             Start earning today
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

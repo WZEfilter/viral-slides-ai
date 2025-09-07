@@ -10,8 +10,14 @@ import {
   ArrowRight,
   CheckCircle
 } from "lucide-react";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 const ProductDetailsSection = () => {
+  const { elementRef: headerRef, isVisible: headerVisible } = useIntersectionObserver();
+  const { elementRef: featuresRef, isVisible: featuresVisible } = useIntersectionObserver();
+  const { elementRef: benefitsRef, isVisible: benefitsVisible } = useIntersectionObserver();
+  const { elementRef: statsRef, isVisible: statsVisible } = useIntersectionObserver();
+
   const features = [
     {
       icon: Brain,
@@ -58,7 +64,12 @@ const ProductDetailsSection = () => {
     <section className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16 opacity-0 animate-fade-in-up">
+        <div 
+          ref={headerRef}
+          className={`text-center mb-16 transition-all duration-700 ${
+            headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Everything You Need to 
             <span className="block bg-gradient-hero bg-clip-text text-transparent">
@@ -72,12 +83,19 @@ const ProductDetailsSection = () => {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+        <div 
+          ref={featuresRef}
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20"
+        >
           {features.map((feature, index) => (
             <Card 
               key={index} 
-              className={`bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all group hover:scale-105 opacity-0 animate-fade-in-up`}
-              style={{ animationDelay: `${index * 100}ms` }}
+              className={`bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all group hover:scale-105 duration-700 ${
+                featuresVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ 
+                transitionDelay: featuresVisible ? `${index * 100}ms` : '0ms'
+              }}
             >
               <CardContent className="p-6">
                 <div className="mb-4">
@@ -93,7 +111,12 @@ const ProductDetailsSection = () => {
         </div>
 
         {/* Benefits Section */}
-        <div className="bg-gradient-card backdrop-blur-md rounded-2xl p-8 lg:p-12 border border-neo-purple/20 opacity-0 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+        <div 
+          ref={benefitsRef}
+          className={`bg-gradient-card backdrop-blur-md rounded-2xl p-8 lg:p-12 border border-neo-purple/20 transition-all duration-700 ${
+            benefitsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h3 className="text-3xl font-bold mb-6">
@@ -116,8 +139,12 @@ const ProductDetailsSection = () => {
               {benefits.map((benefit, index) => (
                 <div 
                   key={index} 
-                  className={`flex items-start opacity-0 animate-fade-in-left`}
-                  style={{ animationDelay: `${800 + (index * 100)}ms` }}
+                  className={`flex items-start transition-all duration-500 ${
+                    benefitsVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+                  }`}
+                  style={{ 
+                    transitionDelay: benefitsVisible ? `${200 + (index * 100)}ms` : '0ms'
+                  }}
                 >
                   <CheckCircle className="h-6 w-6 text-neo-purple mr-3 mt-0.5 flex-shrink-0" />
                   <span className="text-foreground">{benefit}</span>
@@ -128,26 +155,37 @@ const ProductDetailsSection = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="grid md:grid-cols-4 gap-8 mt-20">
-          <div className="text-center opacity-0 animate-scale-in" style={{ animationDelay: '1400ms' }}>
+        <div 
+          ref={statsRef}
+          className="grid md:grid-cols-4 gap-8 mt-20"
+        >
+          <div className={`text-center transition-all duration-700 ${
+            statsVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          }`} style={{ transitionDelay: statsVisible ? '100ms' : '0ms' }}>
             <div className="text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-2 hover:scale-110 transition-transform duration-300">
               10M+
             </div>
             <div className="text-muted-foreground">Content pieces generated</div>
           </div>
-          <div className="text-center opacity-0 animate-scale-in" style={{ animationDelay: '1500ms' }}>
+          <div className={`text-center transition-all duration-700 ${
+            statsVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          }`} style={{ transitionDelay: statsVisible ? '200ms' : '0ms' }}>
             <div className="text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-2 hover:scale-110 transition-transform duration-300">
               $2M+
             </div>
             <div className="text-muted-foreground">Creator earnings facilitated</div>
           </div>
-          <div className="text-center opacity-0 animate-scale-in" style={{ animationDelay: '1600ms' }}>
+          <div className={`text-center transition-all duration-700 ${
+            statsVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          }`} style={{ transitionDelay: statsVisible ? '300ms' : '0ms' }}>
             <div className="text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-2 hover:scale-110 transition-transform duration-300">
               50K+
             </div>
             <div className="text-muted-foreground">Active creators</div>
           </div>
-          <div className="text-center opacity-0 animate-scale-in" style={{ animationDelay: '1700ms' }}>
+          <div className={`text-center transition-all duration-700 ${
+            statsVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          }`} style={{ transitionDelay: statsVisible ? '400ms' : '0ms' }}>
             <div className="text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-2 hover:scale-110 transition-transform duration-300">
               98%
             </div>
