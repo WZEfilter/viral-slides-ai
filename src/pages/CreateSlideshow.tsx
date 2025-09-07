@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -44,6 +44,7 @@ const CreateSlideshow = () => {
   const [searchParams] = useSearchParams();
   const editingId = searchParams.get('edit');
   
+  // Core form state
   const [title, setTitle] = useState('');
   const [prompt, setPrompt] = useState('');
   const [imageCount, setImageCount] = useState(5);
@@ -64,7 +65,7 @@ const CreateSlideshow = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const connectedPlatforms = getConnectedPlatforms();
-  const totalCredits = imageCount * 1; // Base credit cost
+  const totalCredits = imageCount * 1;
   const canGenerate = title.trim() && prompt.trim() && canAfford(totalCredits) && selectedPlatforms.length > 0;
   const canSaveDraft = title.trim() && prompt.trim();
 
@@ -76,21 +77,18 @@ const CreateSlideshow = () => {
         setTitle(scenario.title);
         setPrompt(scenario.description || '');
         setIsScheduled(scenario.is_scheduled);
-        // Initialize platform selections from stored platforms array
         const platformSelections = scenario.platforms.map(platformId => ({
           platformId,
-          accountIds: [] // Default to empty, would need to be stored in DB
+          accountIds: []
         }));
         setSelectedPlatforms(platformSelections);
       }
     } else {
-      // Load draft for new scenario
       const draft = loadDraft();
       if (draft) {
         setTitle(draft.title || '');
         setPrompt(draft.description || '');
         setIsScheduled(draft.is_scheduled || false);
-        // Load platform selections from draft
         const platformSelections = (draft.platforms || []).map(platformId => ({
           platformId,
           accountIds: []
@@ -98,26 +96,80 @@ const CreateSlideshow = () => {
         setSelectedPlatforms(platformSelections);
       }
     }
-  }, [editingId, getScenarioById, loadDraft]);
+  }, [editingId]);
 
-  // Auto-save draft with debounce
+  // Auto-save draft with proper debouncing
+  const debouncedSaveDraft = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return () => {
+        if (!editingId && (title || prompt)) {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => {
+            const draftData = {
+              title,
+              description: prompt,
+              niche: 'general',
+              platforms: selectedPlatforms.map(p => p.platformId),
+              is_scheduled: isScheduled,
+            };
+            saveDraft(draftData);
+          }, 3000);
+        }
+      };
+    })(),
+    [title, prompt, selectedPlatforms, isScheduled, editingId]
+  );
+
   useEffect(() => {
-    if (!editingId && (title || prompt)) {
-      const timeoutId = setTimeout(() => {
-        const draftData = {
-          title,
-          description: prompt,
-          niche: 'general',
-          platforms: selectedPlatforms.map(p => p.platformId),
-          is_scheduled: isScheduled,
-        };
-        saveDraft(draftData);
-      }, 5000); // Longer debounce to prevent interference
+    debouncedSaveDraft();
+  }, [debouncedSaveDraft]);
 
-      return () => clearTimeout(timeoutId);
+  // Event handlers
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+
+  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setPrompt(e.target.value);
+  };
+
+  const handleImageCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.max(1, Math.min(10, parseInt(e.target.value) || 1));
+    setImageCount(value);
+  };
+
+  const handlePublishOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPublishOption(e.target.value as 'draft' | 'publish');
+  };
+
+  const handlePlatformAccountToggle = (platformId: string, accountId: string, checked: boolean) => {
+    if (checked) {
+      const existingPlatform = selectedPlatforms.find(p => p.platformId === platformId);
+      if (existingPlatform) {
+        setSelectedPlatforms(prev => prev.map(p => 
+          p.platformId === platformId 
+            ? { ...p, accountIds: [...p.accountIds, accountId] }
+            : p
+        ));
+      } else {
+        setSelectedPlatforms(prev => [...prev, {
+          platformId,
+          accountIds: [accountId]
+        }]);
+      }
+    } else {
+      setSelectedPlatforms(prev => prev.map(p => {
+        if (p.platformId === platformId) {
+          const newAccountIds = p.accountIds.filter(id => id !== accountId);
+          return newAccountIds.length > 0 
+            ? { ...p, accountIds: newAccountIds }
+            : null;
+        }
+        return p;
+      }).filter(Boolean) as PlatformSelection[]);
     }
-  }, [title, prompt, selectedPlatforms, isScheduled, editingId, saveDraft]);
-
+  };
 
   const handleDayToggle = (dayIndex: number, enabled: boolean) => {
     setWeekSchedule(schedule => schedule.map((day, index) => 
@@ -195,7 +247,6 @@ const CreateSlideshow = () => {
 
     setIsGenerating(true);
     try {
-      // First save/update the scenario
       const scenarioData = {
         title,
         description: prompt,
@@ -213,7 +264,6 @@ const CreateSlideshow = () => {
         await updateScenario(editingId, scenarioData);
       }
 
-      // Then generate content
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: {
           prompt,
@@ -284,7 +334,7 @@ const CreateSlideshow = () => {
                       id="title"
                       placeholder="e.g., Daily Tech Updates"
                       value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      onChange={handleTitleChange}
                     />
                   </div>
 
@@ -294,7 +344,7 @@ const CreateSlideshow = () => {
                       id="prompt"
                       placeholder="Describe what kind of content you want to create..."
                       value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
+                      onChange={handlePromptChange}
                       rows={4}
                     />
                   </div>
@@ -308,7 +358,7 @@ const CreateSlideshow = () => {
                         min="1"
                         max="10"
                         value={imageCount}
-                        onChange={(e) => setImageCount(Math.max(1, Math.min(10, parseInt(e.target.value) || 1)))}
+                        onChange={handleImageCountChange}
                         className="w-20"
                       />
                       <Badge variant="outline">{imageCount} image{imageCount !== 1 ? 's' : ''}</Badge>
@@ -343,33 +393,9 @@ const CreateSlideshow = () => {
                                 <Checkbox
                                   id={`${platform.id}-${account.id}`}
                                   checked={isSelected}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      const existingPlatform = selectedPlatforms.find(p => p.platformId === platform.id);
-                                      if (existingPlatform) {
-                                        setSelectedPlatforms(selectedPlatforms.map(p => 
-                                          p.platformId === platform.id 
-                                            ? { ...p, accountIds: [...p.accountIds, account.id] }
-                                            : p
-                                        ));
-                                      } else {
-                                        setSelectedPlatforms([...selectedPlatforms, {
-                                          platformId: platform.id,
-                                          accountIds: [account.id]
-                                        }]);
-                                      }
-                                    } else {
-                                      setSelectedPlatforms(selectedPlatforms.map(p => {
-                                        if (p.platformId === platform.id) {
-                                          const newAccountIds = p.accountIds.filter(id => id !== account.id);
-                                          return newAccountIds.length > 0 
-                                            ? { ...p, accountIds: newAccountIds }
-                                            : null;
-                                        }
-                                        return p;
-                                      }).filter(Boolean) as PlatformSelection[]);
-                                    }
-                                  }}
+                                  onCheckedChange={(checked) => 
+                                    handlePlatformAccountToggle(platform.id, account.id, checked as boolean)
+                                  }
                                 />
                                 <Label 
                                   htmlFor={`${platform.id}-${account.id}`}
@@ -526,7 +552,7 @@ const CreateSlideshow = () => {
                         name="publishOption"
                         value="draft"
                         checked={publishOption === 'draft'}
-                        onChange={(e) => setPublishOption(e.target.value as 'draft' | 'publish')}
+                        onChange={handlePublishOptionChange}
                         className="w-4 h-4"
                       />
                       <Label htmlFor="publish-draft">Save as Draft Post</Label>
@@ -538,7 +564,7 @@ const CreateSlideshow = () => {
                         name="publishOption"
                         value="publish"
                         checked={publishOption === 'publish'}
-                        onChange={(e) => setPublishOption(e.target.value as 'draft' | 'publish')}
+                        onChange={handlePublishOptionChange}
                         className="w-4 h-4"
                       />
                       <Label htmlFor="publish-live">Publish Immediately</Label>
