@@ -53,7 +53,7 @@ const CreateSlideshow = () => {
   const [selectedPlatforms, setSelectedPlatforms] = useState<PlatformSelection[]>([]);
   const [isScheduled, setIsScheduled] = useState(false);
   const [publishOption, setPublishOption] = useState<'draft' | 'publish'>('draft');
-  const [aiModel, setAiModel] = useState('flux-kontext-max');
+  const [aiModel, setAiModel] = useState('flux-kontext-pro');
   const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [weekSchedule, setWeekSchedule] = useState<DaySchedule[]>([
     { day: 'Monday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
@@ -71,9 +71,9 @@ const CreateSlideshow = () => {
   
   // AI Model configurations with credit costs
   const aiModels = [
-    { id: 'flux-kontext-max', name: 'Flux.1 Kontext Max', credits: 2, isHot: true, isDefault: true },
-    { id: 'flux-kontext-pro', name: 'Flux.1 Kontext Pro', credits: 1, isHot: true, isDefault: false },
-    { id: 'flux-1.1-pro', name: 'Flux 1.1 Pro', credits: 1, isHot: false, isDefault: false },
+    { id: 'flux-kontext-max', name: 'Flux.1 Kontext Max', credits: 2, isHot: false, isDefault: false },
+    { id: 'flux-kontext-pro', name: 'Flux.1 Kontext Pro', credits: 1, isHot: true, isDefault: true },
+    { id: 'flux-1.1-pro', name: 'Flux 1.1 Pro', credits: 1, isHot: true, isDefault: false },
     { id: 'flux-1.1-ultra', name: 'Flux 1.1 Ultra', credits: 1.5, isHot: false, isDefault: false },
   ];
   
