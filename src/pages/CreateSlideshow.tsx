@@ -86,7 +86,7 @@ const CreateSlideshow = () => {
   const enabledDays = weekSchedule.filter(day => day.enabled);
   const totalPostsPerWeek = enabledDays.reduce((total, day) => total + day.frequency, 0);
   const creditsPerWeek = totalPostsPerWeek * totalCredits;
-  const creditsPerMonth = creditsPerWeek * 4.33; // Average weeks per month
+  const creditsPerMonth = Math.round(creditsPerWeek * 4.345); // More accurate weeks per month (365.25 days / 84 days)
 
   // Load draft on mount and handle editing scenario
   useEffect(() => {
