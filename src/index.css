@@ -65,6 +65,12 @@ All colors MUST be HSL.
   }
 }
 
+@layer components {
+  .neo-card {
+    @apply bg-gradient-card border border-neo-purple/20 backdrop-blur-sm shadow-card;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

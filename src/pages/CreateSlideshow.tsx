@@ -99,19 +99,23 @@ const CreateSlideshow = () => {
     }
   }, [editingId, getScenarioById, loadDraft]);
 
-  // Auto-save draft
+  // Auto-save draft with debounce
   useEffect(() => {
     if (!editingId && (title || prompt)) {
-      const draftData = {
-        title,
-        description: prompt,
-        niche: 'general', // Default niche
-        platforms: selectedPlatforms.map(p => p.platformId),
-        is_scheduled: isScheduled,
-      };
-      saveDraft(draftData);
+      const timeoutId = setTimeout(() => {
+        const draftData = {
+          title,
+          description: prompt,
+          niche: 'general', // Default niche
+          platforms: selectedPlatforms.map(p => p.platformId),
+          is_scheduled: isScheduled,
+        };
+        saveDraft(draftData);
+      }, 1000); // Debounce for 1 second
+
+      return () => clearTimeout(timeoutId);
     }
-  }, [title, prompt, selectedPlatforms, isScheduled, editingId, saveDraft]);
+  }, [title, prompt, selectedPlatforms, isScheduled, editingId]);
 
   const handlePlatformToggle = (platformId: string, checked: boolean) => {
     if (checked) {
