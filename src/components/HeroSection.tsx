@@ -34,8 +34,8 @@ const HeroSection = () => {
               }`}
               style={{ transitionDelay: headlineVisible ? '200ms' : '0ms' }}
             >
-              <span className="block text-foreground">
-                The <span className="bg-gradient-hero bg-clip-text text-transparent">#1 AI Tool</span> for <span className="bg-gradient-hero bg-clip-text text-transparent">TikTok Slideshow Automation</span>
+              <span className="block bg-gradient-to-r from-white to-neo-purple bg-clip-text text-transparent">
+                The #1 AI Tool for TikTok Slideshow Automation
               </span>
             </h1>
 
