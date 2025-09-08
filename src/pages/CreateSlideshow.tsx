@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
+import DashboardNavigation from '@/components/DashboardNavigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -324,8 +325,9 @@ const CreateSlideshow = () => {
   return (
     <div className="min-h-screen bg-gradient-primary">
       <Navigation />
+      <DashboardNavigation />
       
-      <div className="pt-24 pb-16">
+      <div className="pt-8 pb-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
