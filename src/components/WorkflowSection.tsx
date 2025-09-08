@@ -75,7 +75,7 @@ const WorkflowSection = () => {
                     </div>
                   </div>
                   <div className="flex-1 flex flex-col">
-                    <div className="h-14 flex items-center justify-center mb-3">
+                    <div className="h-14 flex items-center justify-center mb-2">
                       <h3 className="text-lg font-semibold text-center leading-tight">{step.title}</h3>
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>

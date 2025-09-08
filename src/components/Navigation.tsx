@@ -26,10 +26,15 @@ const Navigation = () => {
         } else {
           setActiveSection("overview");
         }
+      } else {
+        // Reset to overview when not on landing page
+        setActiveSection("overview");
       }
     };
 
     window.addEventListener('scroll', handleScroll);
+    // Call once on mount to set initial state
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [location.pathname]);
 
@@ -101,11 +106,15 @@ const Navigation = () => {
                 })}
               </div>
             ) : (
-              <div className="relative flex items-center space-x-1 bg-muted/50 rounded-full p-1">
+              <div className="relative flex items-center bg-muted/50 rounded-full p-1">
                 {/* Sliding indicator */}
                 <div 
                   className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out ${
-                    activeSection === "features" ? "translate-x-[100%] w-[88px]" : "translate-x-0 w-[88px]"
+                    activeSection === "features" 
+                      ? "translate-x-[96px] w-[80px]" 
+                      : location.pathname === "/pricing" 
+                        ? "translate-x-[184px] w-[64px]"
+                        : "translate-x-[8px] w-[80px]"
                   }`}
                 />
                 {landingNavItems.map((item, index) => (
@@ -119,7 +128,7 @@ const Navigation = () => {
                         if (element) {
                           const navHeight = 64; // Height of fixed navigation
                           const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                          const offsetPosition = elementPosition - navHeight;
+                          const offsetPosition = elementPosition - navHeight - 20; // Extra offset for better positioning
                           
                           window.scrollTo({
                             top: offsetPosition,
@@ -127,7 +136,7 @@ const Navigation = () => {
                           });
                         }
                       }}
-                      className={`relative z-10 px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                      className={`relative z-10 px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
                         activeSection === "features"
                           ? "text-background"
                           : "text-muted-foreground hover:text-foreground"
@@ -139,7 +148,7 @@ const Navigation = () => {
                     <Link
                       key={item.name}
                       to={item.href}
-                      className={`relative z-10 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      className={`relative z-10 px-4 py-2 text-sm font-medium transition-all ${
                         (activeSection === "overview" && item.href === "/") ||
                         (location.pathname === item.href && item.href !== "/")
                           ? "text-background"
