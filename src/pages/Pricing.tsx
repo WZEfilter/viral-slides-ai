@@ -96,7 +96,7 @@ const PricingPage = () => {
               <span className="bg-gradient-hero bg-clip-text text-transparent">pricing</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Choose the plan that fits your investments. Scale credits with the slider for more posts.
+              Choose the plan that fits your investments. Choose your custom credits to fit your needs.
             </p>
           </div>
 
