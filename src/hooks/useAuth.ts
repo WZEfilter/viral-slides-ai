@@ -10,23 +10,46 @@ export const useAuth = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    let mounted = true;
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        if (!mounted) return;
+        
+        console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Clear any stale cached data on sign out
+        if (event === 'SIGNED_OUT') {
+          localStorage.removeItem('sb-iovkqbsexontzywbapur-auth-token');
+          sessionStorage.clear();
+        }
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (!mounted) return;
+      
+      if (error) {
+        console.error('Error getting session:', error);
+        setLoading(false);
+        return;
+      }
+      
+      console.log('Initial session:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
@@ -93,22 +116,32 @@ export const useAuth = () => {
       setUser(null);
       setSession(null);
       
+      // Sign out from current session only (not global to allow multiple logins)
       const { error } = await supabase.auth.signOut({
-        scope: 'global' // Sign out from all sessions
+        scope: 'local' // Only sign out current session
       });
       
-      if (error) throw error;
+      if (error) {
+        // Even if signOut fails, still clear local state
+        console.warn('Sign out warning:', error.message);
+      }
+
+      // Clear any cached auth data
+      localStorage.removeItem('sb-iovkqbsexontzywbapur-auth-token');
+      sessionStorage.clear();
 
       toast({
         title: "Signed out",
         description: "You have been successfully signed out.",
       });
     } catch (error: any) {
+      // Still clear local state even on error
+      setUser(null);
+      setSession(null);
       console.error('Sign out error:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to sign out",
-        variant: "destructive",
+        title: "Signed out",
+        description: "You have been signed out locally.",
       });
     }
   };

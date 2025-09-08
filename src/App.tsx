@@ -8,7 +8,6 @@ import NotFound from "./pages/NotFound";
 import PricingPage from "./pages/Pricing";
 import Dashboard from "./pages/Dashboard";
 import CreateSlideshow from "./pages/CreateSlideshow";
-import GenerationResults from "./pages/GenerationResults";
 import MyScenarios from "./pages/MyScenarios";
 import SettingsPage from "./pages/Settings";
 import Auth from "./pages/Auth";
@@ -36,11 +35,6 @@ const App = () => (
               <CreateSlideshow />
             </ProtectedRoute>
           } />
-          <Route path="/results" element={
-            <ProtectedRoute>
-              <GenerationResults />
-            </ProtectedRoute>
-          } />
           <Route path="/my-scenarios" element={
             <ProtectedRoute>
               <MyScenarios />
@@ -61,7 +55,7 @@ const App = () => (
           <Route path="/login" element={<Auth />} />
           <Route path="/how-it-works" element={<Index />} />
           <Route path="/features" element={<Index />} />
-          <Route path="/demo" element={<GenerationResults />} />
+          <Route path="/demo" element={<MyScenarios />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

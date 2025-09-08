@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Zap, User, LayoutDashboard, Plus, FolderOpen, BarChart3, Settings as SettingsIcon } from "lucide-react";
+import { Menu, X, Zap, User, LayoutDashboard, Plus, FolderOpen, Settings as SettingsIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -16,7 +16,6 @@ const Navigation = () => {
     location.pathname.startsWith('/dashboard') ||
     location.pathname.startsWith('/create') ||
     location.pathname.startsWith('/my-scenarios') ||
-    location.pathname.startsWith('/results') ||
     location.pathname.startsWith('/settings')
   );
 
@@ -30,7 +29,6 @@ const Navigation = () => {
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Create", href: "/create", icon: Plus },
     { name: "My Scenarios", href: "/my-scenarios", icon: FolderOpen },
-    { name: "Results", href: "/results", icon: BarChart3 },
     { name: "Settings", href: "/settings", icon: SettingsIcon },
   ];
 
