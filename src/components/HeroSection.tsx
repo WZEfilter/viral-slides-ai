@@ -2,8 +2,16 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroPhone from "@/assets/hero-phone-mockup.jpg";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 const HeroSection = () => {
+  const { elementRef: badgeRef, isVisible: badgeVisible } = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+  const { elementRef: headlineRef, isVisible: headlineVisible } = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+  const { elementRef: subtitleRef, isVisible: subtitleVisible } = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+  const { elementRef: buttonsRef, isVisible: buttonsVisible } = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+  const { elementRef: statsRef, isVisible: statsVisible } = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+  const { elementRef: visualRef, isVisible: visualVisible } = useIntersectionObserver({ threshold: 0.1, triggerOnce: true });
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-primary">
       {/* Background Effects */}
@@ -19,13 +27,24 @@ const HeroSection = () => {
           {/* Hero Content */}
           <div className="text-center lg:text-left">
             {/* Badge */}
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-glass backdrop-blur-md border border-neo-purple/20 text-sm font-medium text-foreground mb-6 hover:border-neo-purple/40 transition-all animate-fade-in-down">
+            <div 
+              ref={badgeRef}
+              className={`inline-flex items-center px-4 py-2 rounded-full bg-gradient-glass backdrop-blur-md border border-neo-purple/20 text-sm font-medium text-foreground mb-6 hover:border-neo-purple/40 transition-all duration-700 ${
+                badgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+              }`}
+            >
               <Sparkles className="h-4 w-4 mr-2 text-neo-purple" />
               AI-Powered Social Media Revolution
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight animate-fade-in-up">
+            <h1 
+              ref={headlineRef}
+              className={`text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight transition-all duration-700 ${
+                headlineVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ transitionDelay: headlineVisible ? '200ms' : '0ms' }}
+            >
               <span className="block text-foreground">Take control of your</span>
               <span className="block bg-gradient-hero bg-clip-text text-transparent">
                 Viral Content
@@ -33,13 +52,25 @@ const HeroSection = () => {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto lg:mx-0 animate-fade-in-up-delay">
+            <p 
+              ref={subtitleRef}
+              className={`text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto lg:mx-0 transition-all duration-700 ${
+                subtitleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ transitionDelay: subtitleVisible ? '400ms' : '0ms' }}
+            >
               Generate stunning slideshow carousels and 1:02 videos for TikTok, Instagram & Pinterest. 
               <span className="text-neo-purple font-semibold"> Post directly or save as drafts.</span>
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up-delay-2">
+            <div 
+              ref={buttonsRef}
+              className={`flex flex-col sm:flex-row gap-4 justify-center lg:justify-start transition-all duration-700 ${
+                buttonsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ transitionDelay: buttonsVisible ? '600ms' : '0ms' }}
+            >
               <Link to="/signup">
                 <Button variant="hero" size="lg" className="group hover:scale-105 transition-all duration-300">
                   Start for free
@@ -55,7 +86,13 @@ const HeroSection = () => {
             </div>
 
             {/* Stats */}
-            <div className="flex items-center justify-center lg:justify-start space-x-8 mt-12 text-sm text-muted-foreground animate-fade-in-up-delay-3">
+            <div 
+              ref={statsRef}
+              className={`flex items-center justify-center lg:justify-start space-x-8 mt-12 text-sm text-muted-foreground transition-all duration-700 ${
+                statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ transitionDelay: statsVisible ? '800ms' : '0ms' }}
+            >
               <div className="text-center hover:scale-110 transition-transform duration-300">
                 <div className="text-2xl font-bold text-neo-purple">50K+</div>
                 <div>Posts Created</div>
@@ -72,7 +109,13 @@ const HeroSection = () => {
           </div>
 
           {/* Hero Visual */}
-          <div className="relative flex justify-center lg:justify-end animate-fade-in-right">
+          <div 
+            ref={visualRef}
+            className={`relative flex justify-center lg:justify-end transition-all duration-700 ${
+              visualVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+            }`}
+            style={{ transitionDelay: visualVisible ? '400ms' : '0ms' }}
+          >
             {/* Main Phone */}
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-hero rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-all duration-500" />
