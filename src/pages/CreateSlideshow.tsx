@@ -15,6 +15,7 @@ import { TimePicker } from '@/components/ui/time-picker';
 import { CreditMeter } from '@/components/CreditMeter';
 import { ArrowLeft, Plus, X, Clock, Calendar } from 'lucide-react';
 import { useCredits } from '@/hooks/useCredits';
+import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 import { useScenarios } from '@/hooks/useScenarios';
 import { usePlatforms } from '@/hooks/usePlatforms';
@@ -41,6 +42,7 @@ const CreateSlideshow = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { availableCredits, usedThisMonth, canAfford } = useCredits();
+  const { profile } = useProfile();
   const { createScenario, updateScenario, getScenarioById, saveDraft, loadDraft, clearDraft } = useScenarios();
   const { platforms, getConnectedPlatforms } = usePlatforms();
   const [searchParams] = useSearchParams();
@@ -566,7 +568,8 @@ const CreateSlideshow = () => {
             <div className="space-y-6">
               <CreditMeter 
                 availableCredits={availableCredits} 
-                usedThisMonth={usedThisMonth} 
+                usedThisMonth={usedThisMonth}
+                creditsLimit={profile?.credits_limit || 100}
                 estimatedUsage={{
                   images: imageCount,
                   model: selectedModelConfig.name,

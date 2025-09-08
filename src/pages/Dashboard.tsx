@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Plus, Calendar, TrendingUp, Users, Zap, FolderOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -145,14 +146,32 @@ const Dashboard = () => {
               </Card>
 
               <Card className="p-6 bg-gradient-card border border-neo-pink/20">
-                <h3 className="font-semibold text-foreground mb-2">Credits Usage</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  You have {remainingCredits} credits remaining this month
-                </p>
-                <div className="w-full bg-muted/20 rounded-full h-2 mb-4">
-                  <div className="bg-gradient-hero h-2 rounded-full" style={{ width: `${Math.min(usagePercentage, 100)}%` }} />
+                <div className="flex items-center gap-2 mb-4">
+                  <Zap className="h-5 w-5 text-neo-blue" />
+                  <h3 className="font-semibold text-foreground">Credits Usage</h3>
                 </div>
-                <Link to="/pricing">
+                
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Used this month</span>
+                    <span className="text-foreground font-medium">
+                      {profile?.credits_used || 0} / {profile?.credits_limit || 100}
+                    </span>
+                  </div>
+                  
+                  <Progress 
+                    value={usagePercentage} 
+                    className="h-3"
+                  />
+                  
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>0</span>
+                    <span>{remainingCredits} credits left</span>
+                    <span>{profile?.credits_limit || 100}</span>
+                  </div>
+                </div>
+                
+                <Link to="/pricing" className="block mt-4">
                   <Button variant="neon" size="sm" className="w-full">
                     Upgrade Plan
                   </Button>
