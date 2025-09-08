@@ -74,8 +74,10 @@ const WorkflowSection = () => {
                       <step.icon className="h-6 w-6 text-background" />
                     </div>
                   </div>
-                  <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="text-lg font-semibold mb-3 min-h-[3.5rem] flex items-center justify-center">{step.title}</h3>
+                  <div className="flex-1 flex flex-col">
+                    <div className="h-14 flex items-center justify-center mb-3">
+                      <h3 className="text-lg font-semibold text-center leading-tight">{step.title}</h3>
+                    </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
                   </div>
                 </CardContent>
