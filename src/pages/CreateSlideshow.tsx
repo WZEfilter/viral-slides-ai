@@ -567,7 +567,7 @@ const CreateSlideshow = () => {
             {/* Sidebar */}
             <div className="space-y-6">
               <CreditMeter 
-                availableCredits={profile?.credits_limit || 100} 
+                availableCredits={availableCredits} 
                 usedThisMonth={usedThisMonth}
                 creditsLimit={profile?.credits_limit || 100}
                 estimatedUsage={{

@@ -20,7 +20,7 @@ export const CreditMeter = ({
   className 
 }: CreditMeterProps) => {
   const remainingCredits = availableCredits - (estimatedUsage?.totalCredits || 0);
-  const remainingPercentage = (remainingCredits / creditsLimit) * 100;
+  const availablePercentage = (availableCredits / creditsLimit) * 100;
   const willExceedLimit = estimatedUsage && (usedThisMonth + estimatedUsage.totalCredits) > creditsLimit;
   
   return (
@@ -32,20 +32,20 @@ export const CreditMeter = ({
       
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Used this month</span>
+          <span className="text-muted-foreground">Available credits</span>
           <span className="text-foreground font-medium">
-            {usedThisMonth} / {creditsLimit}
+            {availableCredits} / {creditsLimit}
           </span>
         </div>
         
         <Progress 
-          value={Math.max(0, remainingPercentage)} 
+          value={Math.max(0, availablePercentage)} 
           className="h-3"
         />
         
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>0</span>
-          <span>{availableCredits} credits left</span>
+          <span>{usedThisMonth} used this month</span>
           <span>{creditsLimit}</span>
         </div>
         
