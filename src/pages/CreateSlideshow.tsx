@@ -82,7 +82,7 @@ const CreateSlideshow = () => {
   const selectedModelConfig = aiModels.find(model => model.id === aiModel) || aiModels[0];
   const totalCredits = imageCount * selectedModelConfig.credits;
   const canGenerate = title.trim() && prompt.trim() && canAfford(totalCredits) && selectedPlatforms.length > 0;
-  const canSaveDraft = title.trim() && prompt.trim();
+  const canSaveDraft = title.trim() || prompt.trim(); // Allow saving with just title OR prompt
   
   // Calculate usage cost estimation based on frequency and model selection
   const enabledDays = weekSchedule.filter(day => day.enabled);
@@ -232,8 +232,8 @@ const CreateSlideshow = () => {
     setIsSaving(true);
     try {
       const scenarioData = {
-        title,
-        description: prompt,
+        title: title.trim() || 'Untitled Scenario',
+        description: prompt.trim() || '',
         niche: 'general',
         platforms: selectedPlatforms.map(p => p.platformId),
         is_scheduled: isScheduled,
