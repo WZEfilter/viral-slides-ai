@@ -10,6 +10,8 @@ import Navigation from "@/components/Navigation";
 const PricingPage = () => {
   const [creatorCredits, setCreatorCredits] = useState("0");
   const [entrepreneurCredits, setEntrepreneurCredits] = useState("0");
+  const [creatorCustom, setCreatorCustom] = useState("");
+  const [entrepreneurCustom, setEntrepreneurCustom] = useState("");
   
   const calculateAdditionalPrice = (additional: number) => {
     // $0.10 per additional credit
@@ -37,13 +39,13 @@ const PricingPage = () => {
     },
     {
       name: "Creator",
-      price: `$${25 + calculateAdditionalPrice(parseInt(creatorCredits) || 0)}`,
+      price: `$${25 + calculateAdditionalPrice(creatorCredits === "custom" ? (parseInt(creatorCustom) || 0) : (parseInt(creatorCredits) || 0))}`,
       period: "/month",
-      description: `${200 + (parseInt(creatorCredits) || 0)} credits monthly`,
+      description: `${200 + (creatorCredits === "custom" ? (parseInt(creatorCustom) || 0) : (parseInt(creatorCredits) || 0))} credits monthly`,
       subDescription: "200 base credits + additional credits. Rerolls & HQ models use more credits.",
       features: [
         "200 base credits included",
-        `+${parseInt(creatorCredits) || 0} additional credits`,
+        `+${creatorCredits === "custom" ? (parseInt(creatorCustom) || 0) : (parseInt(creatorCredits) || 0)} additional credits`,
         "1 account per platform",
         "Scheduling enabled",
         "Draft/Publish anywhere",
@@ -54,16 +56,18 @@ const PricingPage = () => {
       popular: true,
       creditsState: creatorCredits,
       setCreditsState: setCreatorCredits,
+      customValue: creatorCustom,
+      setCustomValue: setCreatorCustom,
     },
     {
       name: "Entrepreneur",
-      price: `$${49 + calculateAdditionalPrice(parseInt(entrepreneurCredits) || 0)}`,
+      price: `$${49 + calculateAdditionalPrice(entrepreneurCredits === "custom" ? (parseInt(entrepreneurCustom) || 0) : (parseInt(entrepreneurCredits) || 0))}`,
       period: "/month",
-      description: `${200 + (parseInt(entrepreneurCredits) || 0)} credits monthly`,
+      description: `${200 + (entrepreneurCredits === "custom" ? (parseInt(entrepreneurCustom) || 0) : (parseInt(entrepreneurCredits) || 0))} credits monthly`,
       subDescription: "200 base credits + additional credits. Rerolls & HQ models use more credits.",
       features: [
         "200 base credits included",
-        `+${parseInt(entrepreneurCredits) || 0} additional credits`,
+        `+${entrepreneurCredits === "custom" ? (parseInt(entrepreneurCustom) || 0) : (parseInt(entrepreneurCredits) || 0)} additional credits`,
         "10 accounts per platform",
         "Scheduling enabled",
         "Draft/Publish anywhere",
@@ -74,6 +78,8 @@ const PricingPage = () => {
       popular: false,
       creditsState: entrepreneurCredits,
       setCreditsState: setEntrepreneurCredits,
+      customValue: entrepreneurCustom,
+      setCustomValue: setEntrepreneurCustom,
     },
   ];
 
@@ -130,17 +136,11 @@ const PricingPage = () => {
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Additional Credits
                     </label>
-                    <Select value={plan.creditsState === "custom" ? "custom" : plan.creditsState} onValueChange={(value) => {
-                      if (value === "custom") {
-                        plan.setCreditsState?.("custom");
-                      } else {
-                        plan.setCreditsState?.(value);
-                      }
-                    }}>
+                    <Select value={plan.creditsState} onValueChange={plan.setCreditsState}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select additional credits" />
                       </SelectTrigger>
-                      <SelectContent className="bg-background border border-border">
+                      <SelectContent className="bg-background border border-border z-50">
                         <SelectItem value="custom">Custom amount</SelectItem>
                         <SelectItem value="0">0 credits (+$0)</SelectItem>
                         <SelectItem value="100">100 credits (+$10)</SelectItem>
@@ -151,19 +151,17 @@ const PricingPage = () => {
                     </Select>
                     
                     {/* Custom input field - shows when custom is selected */}
-                    {plan.creditsState === "custom" && (
+                    {plan.creditsState === "custom" && plan.customValue !== undefined && plan.setCustomValue && (
                       <div className="mt-3">
                         <Input
                           type="number"
                           placeholder="Enter custom amount"
-                          className="w-full bg-background border-border text-foreground"
+                          className="w-full bg-card border-border text-foreground placeholder:text-muted-foreground"
                           onChange={(e) => {
                             const value = e.target.value;
-                            if (value === "" || parseInt(value) >= 0) {
-                              plan.setCreditsState?.(value || "0");
-                            }
+                            plan.setCustomValue(value);
                           }}
-                          value=""
+                          value={plan.customValue}
                           min="0"
                         />
                       </div>
