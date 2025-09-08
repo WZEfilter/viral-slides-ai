@@ -130,23 +130,18 @@ const PricingPage = () => {
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Additional Credits
                     </label>
-                    <Select value={plan.creditsState} onValueChange={plan.setCreditsState}>
+                    <Select value={plan.creditsState === "custom" ? "custom" : plan.creditsState} onValueChange={(value) => {
+                      if (value === "custom") {
+                        plan.setCreditsState?.("custom");
+                      } else {
+                        plan.setCreditsState?.(value);
+                      }
+                    }}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select additional credits" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="custom">
-                          <div className="flex items-center gap-2">
-                            <Input
-                              type="number"
-                              placeholder="Custom amount"
-                              className="w-32"
-                              onClick={(e) => e.stopPropagation()}
-                              onChange={(e) => plan.setCreditsState?.(e.target.value)}
-                              value={plan.creditsState === "custom" ? "" : plan.creditsState}
-                            />
-                          </div>
-                        </SelectItem>
+                      <SelectContent className="bg-background border border-border">
+                        <SelectItem value="custom">Custom amount</SelectItem>
                         <SelectItem value="0">0 credits (+$0)</SelectItem>
                         <SelectItem value="100">100 credits (+$10)</SelectItem>
                         <SelectItem value="300">300 credits (+$30)</SelectItem>
@@ -154,6 +149,25 @@ const PricingPage = () => {
                         <SelectItem value="1000">1000 credits (+$100)</SelectItem>
                       </SelectContent>
                     </Select>
+                    
+                    {/* Custom input field - shows when custom is selected */}
+                    {plan.creditsState === "custom" && (
+                      <div className="mt-3">
+                        <Input
+                          type="number"
+                          placeholder="Enter custom amount"
+                          className="w-full bg-background border-border text-foreground"
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "" || parseInt(value) >= 0) {
+                              plan.setCreditsState?.(value || "0");
+                            }
+                          }}
+                          value=""
+                          min="0"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
 
