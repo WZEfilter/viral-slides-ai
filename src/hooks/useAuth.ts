@@ -89,7 +89,14 @@ export const useAuth = () => {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
+      // Clear local state first
+      setUser(null);
+      setSession(null);
+      
+      const { error } = await supabase.auth.signOut({
+        scope: 'global' // Sign out from all sessions
+      });
+      
       if (error) throw error;
 
       toast({
@@ -97,9 +104,10 @@ export const useAuth = () => {
         description: "You have been successfully signed out.",
       });
     } catch (error: any) {
+      console.error('Sign out error:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to sign out",
         variant: "destructive",
       });
     }

@@ -39,7 +39,10 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
+          <Link 
+            to={isAuthenticated ? "/dashboard" : "/"} 
+            className="flex items-center space-x-2 group"
+          >
             <div className="p-2 rounded-lg bg-gradient-hero">
               <Zap className="h-6 w-6 text-background" />
             </div>
@@ -98,16 +101,13 @@ const Navigation = () => {
           <div className="hidden md:flex items-center space-x-3">
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard">
-                  <Button variant="ghost" size="sm">
-                    Dashboard
-                  </Button>
-                </Link>
-                <Link to="/create">
-                  <Button variant="ghost" size="sm">
-                    Create
-                  </Button>
-                </Link>
+                {!isDashboardPage && (
+                  <Link to="/dashboard">
+                    <Button variant="ghost" size="sm">
+                      Dashboard
+                    </Button>
+                  </Link>
+                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
@@ -201,16 +201,13 @@ const Navigation = () => {
               <div className="flex flex-col space-y-2 pt-4 border-t border-neo-purple/20">
                 {isAuthenticated ? (
                   <>
-                    <Link to="/dashboard" onClick={() => setIsOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full">
-                        Dashboard
-                      </Button>
-                    </Link>
-                    <Link to="/create" onClick={() => setIsOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full">
-                        Create
-                      </Button>
-                    </Link>
+                    {!isDashboardPage && (
+                      <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                        <Button variant="ghost" size="sm" className="w-full">
+                          Dashboard
+                        </Button>
+                      </Link>
+                    )}
                     <Button 
                       variant="ghost" 
                       size="sm" 
