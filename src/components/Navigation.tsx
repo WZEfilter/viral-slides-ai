@@ -37,22 +37,24 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link 
-            to={isAuthenticated ? "/dashboard" : "/"} 
-            className="flex items-center space-x-2 group"
-          >
-            <div className="p-2 rounded-lg bg-gradient-hero">
-              <Zap className="h-6 w-6 text-background" />
-            </div>
-            <span className="text-xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-              ViralSlides AI
-            </span>
-          </Link>
+          <div className="flex items-center min-w-0 flex-shrink-0">
+            <Link 
+              to={isAuthenticated ? "/dashboard" : "/"} 
+              className="flex items-center space-x-2 group"
+            >
+              <div className="p-2 rounded-lg bg-gradient-hero">
+                <Zap className="h-6 w-6 text-background" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-hero bg-clip-text text-transparent">
+                ViralSlides AI
+              </span>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center justify-center flex-1 px-8">
             {isDashboardPage ? (
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center space-x-2">
                 {dashboardNavItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = location.pathname === item.href || 
@@ -96,7 +98,7 @@ const Navigation = () => {
           </div>
 
           {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center space-x-3 min-w-0 flex-shrink-0">
             {isAuthenticated ? (
               <>
                 {!isDashboardPage && (
