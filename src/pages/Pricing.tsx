@@ -88,7 +88,7 @@ const PricingPage = () => {
             {plans.map((plan) => (
               <Card
                 key={plan.name}
-                className={`relative p-8 bg-gradient-card border transition-all hover:border-neo-purple/40 hover:shadow-glow-primary ${
+                className={`relative p-8 bg-gradient-card border transition-all hover:border-neo-purple/40 hover:shadow-glow-primary flex flex-col h-full ${
                   plan.popular ? "border-neo-purple/60 shadow-glow-primary scale-105" : "border-neo-purple/20"
                 }`}
               >
@@ -113,7 +113,7 @@ const PricingPage = () => {
                   )}
                 </div>
 
-                <div className="space-y-4 mb-8">
+                <div className="space-y-4 mb-8 flex-grow">
                   {plan.features.map((feature) => (
                     <div key={feature} className="flex items-center">
                       <Check className="h-5 w-5 text-neo-purple mr-3 flex-shrink-0" />
@@ -130,11 +130,13 @@ const PricingPage = () => {
                   ))}
                 </div>
 
-                <Link to="/signup" className="block">
-                  <Button variant={plan.variant} className="w-full">
-                    {plan.cta}
-                  </Button>
-                </Link>
+                <div className="mt-auto">
+                  <Link to="/signup" className="block">
+                    <Button variant={plan.variant} className="w-full">
+                      {plan.cta}
+                    </Button>
+                  </Link>
+                </div>
               </Card>
             ))}
           </div>
