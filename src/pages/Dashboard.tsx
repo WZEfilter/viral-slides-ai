@@ -156,9 +156,9 @@ const Dashboard = () => {
                 
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Used this month</span>
+                    <span className="text-muted-foreground">Available credits</span>
                     <span className="text-foreground font-medium">
-                      {profile?.credits_used || 0} / {profile?.credits_limit || 100}
+                      {remainingCredits} / {profile?.credits_limit || 100}
                     </span>
                   </div>
                   
@@ -169,7 +169,7 @@ const Dashboard = () => {
                   
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>0</span>
-                    <span>{remainingCredits} credits left</span>
+                    <span>{profile?.credits_used || 0} used this month</span>
                     <span>{profile?.credits_limit || 100}</span>
                   </div>
                 </div>
