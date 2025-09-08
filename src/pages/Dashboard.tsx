@@ -11,7 +11,7 @@ const Dashboard = () => {
   const { profile, loading } = useProfile();
   
   const remainingCredits = profile ? profile.credits_limit - profile.credits_used : 0;
-  const usagePercentage = profile ? (profile.credits_used / profile.credits_limit) * 100 : 0;
+  const remainingPercentage = profile ? (remainingCredits / profile.credits_limit) * 100 : 0;
 
   const stats = [
     { label: "Total Posts", value: "24", icon: TrendingUp, color: "neo-purple" },
@@ -160,7 +160,7 @@ const Dashboard = () => {
                   </div>
                   
                   <Progress 
-                    value={usagePercentage} 
+                    value={remainingPercentage} 
                     className="h-3"
                   />
                   

@@ -20,7 +20,7 @@ export const CreditMeter = ({
   className 
 }: CreditMeterProps) => {
   const remainingCredits = availableCredits - (estimatedUsage?.totalCredits || 0);
-  const usagePercentage = (usedThisMonth / creditsLimit) * 100;
+  const remainingPercentage = (remainingCredits / creditsLimit) * 100;
   const willExceedLimit = estimatedUsage && (usedThisMonth + estimatedUsage.totalCredits) > creditsLimit;
   
   return (
@@ -39,7 +39,7 @@ export const CreditMeter = ({
         </div>
         
         <Progress 
-          value={usagePercentage} 
+          value={Math.max(0, remainingPercentage)} 
           className="h-3"
         />
         
