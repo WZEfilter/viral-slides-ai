@@ -34,7 +34,7 @@ const HeroSection = () => {
               }`}
               style={{ transitionDelay: headlineVisible ? '200ms' : '0ms' }}
             >
-              <span className="block bg-gradient-to-r from-white to-neo-purple bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-neo-pink to-neo-purple bg-clip-text text-transparent">
                 The #1 AI Tool for TikTok Slideshow Automation
               </span>
             </h1>
