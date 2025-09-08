@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,9 +7,14 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
 import Navigation from '@/components/Navigation';
 import { ProfileSettings } from '@/components/ProfileSettings';
 import { usePlatforms } from '@/hooks/usePlatforms';
+import { useProfile } from '@/hooks/useProfile';
+import { useCredits } from '@/hooks/useCredits';
+import { useSearchParams } from 'react-router-dom';
 import { 
   Settings as SettingsIcon, 
   User, 
@@ -20,11 +25,32 @@ import {
   CheckCircle,
   AlertCircle,
   Crown,
-  Globe
+  Globe,
+  Check,
+  Star,
+  Zap,
+  TrendingUp,
+  Calendar
 } from 'lucide-react';
 
 const Settings = () => {
   const { platforms, getConnectedPlatforms } = usePlatforms();
+  const { profile } = useProfile();
+  const { availableCredits, usedThisMonth } = useCredits();
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState('profile');
+  const [selectedPlan, setSelectedPlan] = useState('creator');
+  const [additionalCredits, setAdditionalCredits] = useState('0');
+  const [customCredits, setCustomCredits] = useState('');
+  
+  // Handle URL tab parameter
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab && ['profile', 'platforms', 'billing', 'security'].includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
+  
   const [notifications, setNotifications] = useState({
     email: true,
     push: false,
@@ -66,7 +92,7 @@ const Settings = () => {
           </div>
 
           {/* Settings Tabs */}
-          <Tabs defaultValue="profile" className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="grid w-full grid-cols-3 lg:grid-cols-4">
               <TabsTrigger value="profile" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
@@ -165,47 +191,208 @@ const Settings = () => {
             </TabsContent>
 
             <TabsContent value="billing" className="space-y-6">
+              {/* Current Usage Overview */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
-                    Billing & Credits
+                    <TrendingUp className="h-5 w-5" />
+                    Current Usage & Plan
                   </CardTitle>
                   <CardDescription>
-                    Manage your subscription and credit usage
+                    Your current plan usage and subscription details
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between p-4 bg-gradient-card border border-neo-purple/20 rounded-lg">
-                    <div>
-                      <h3 className="font-semibold text-foreground flex items-center gap-2">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Current Plan */}
+                    <div className="p-4 bg-gradient-card border border-neo-purple/20 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
                         <Crown className="h-4 w-4 text-yellow-500" />
-                        Current Plan: Free
-                      </h3>
-                      <p className="text-sm text-muted-foreground">100 credits per month</p>
+                        <span className="font-semibold text-foreground">Free Plan</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{profile?.credits_limit || 100} credits per month</p>
                     </div>
-                    <Button variant="hero">Upgrade</Button>
+                    
+                    {/* This Month's Usage */}
+                    <div className="p-4 bg-gradient-card border border-neo-blue/20 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Calendar className="h-4 w-4 text-neo-blue" />
+                        <span className="font-semibold text-foreground">This Month</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {usedThisMonth} / {profile?.credits_limit || 100} credits used
+                      </p>
+                      <Progress 
+                        value={((profile?.credits_limit || 100) - usedThisMonth) / (profile?.credits_limit || 100) * 100} 
+                        className="h-2 mt-2"
+                      />
+                    </div>
+                  </div>
+                  
+                  <Alert>
+                    <Zap className="h-4 w-4" />
+                    <AlertDescription>
+                      <strong>Good news!</strong> Unused credits carry forward to the next month, so you never lose your investment.
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              </Card>
+
+              {/* Upgrade Plans */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Crown className="h-5 w-5" />
+                    Upgrade Your Plan
+                  </CardTitle>
+                  <CardDescription>
+                    Scale your content creation with more credits and features
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    {/* Creator Plan */}
+                    <div className={`relative p-6 rounded-xl border-2 transition-all cursor-pointer ${
+                      selectedPlan === 'creator' 
+                        ? 'border-neo-blue bg-neo-blue/5' 
+                        : 'border-neo-purple/20 bg-gradient-card hover:border-neo-purple/40'
+                    }`}
+                    onClick={() => setSelectedPlan('creator')}>
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge variant="secondary" className="bg-neo-blue/20 text-neo-blue">
+                          <Star className="h-3 w-3 mr-1" />
+                          Most Popular
+                        </Badge>
+                        {selectedPlan === 'creator' && (
+                          <Check className="h-5 w-5 text-neo-blue" />
+                        )}
+                      </div>
+                      
+                      <h3 className="text-xl font-bold text-foreground mb-2">Creator</h3>
+                      <div className="mb-4">
+                        <span className="text-3xl font-bold text-foreground">
+                          ${25 + Math.round((additionalCredits === "custom" ? (parseInt(customCredits) || 0) : (parseInt(additionalCredits) || 0)) * 10) / 100}
+                        </span>
+                        <span className="text-muted-foreground">/month</span>
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {200 + (additionalCredits === "custom" ? (parseInt(customCredits) || 0) : (parseInt(additionalCredits) || 0))} credits monthly
+                      </p>
+                      
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-500" />
+                          200 base credits included
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-500" />
+                          1 account per platform
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-500" />
+                          Scheduling enabled
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-500" />
+                          Premium support
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* Entrepreneur Plan */}
+                    <div className={`relative p-6 rounded-xl border-2 transition-all cursor-pointer ${
+                      selectedPlan === 'entrepreneur' 
+                        ? 'border-neo-pink bg-neo-pink/5' 
+                        : 'border-neo-purple/20 bg-gradient-card hover:border-neo-purple/40'
+                    }`}
+                    onClick={() => setSelectedPlan('entrepreneur')}>
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge variant="secondary" className="bg-neo-pink/20 text-neo-pink">
+                          <Crown className="h-3 w-3 mr-1" />
+                          Pro
+                        </Badge>
+                        {selectedPlan === 'entrepreneur' && (
+                          <Check className="h-5 w-5 text-neo-pink" />
+                        )}
+                      </div>
+                      
+                      <h3 className="text-xl font-bold text-foreground mb-2">Entrepreneur</h3>
+                      <div className="mb-4">
+                        <span className="text-3xl font-bold text-foreground">
+                          ${49 + Math.round((additionalCredits === "custom" ? (parseInt(customCredits) || 0) : (parseInt(additionalCredits) || 0)) * 10) / 100}
+                        </span>
+                        <span className="text-muted-foreground">/month</span>
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {200 + (additionalCredits === "custom" ? (parseInt(customCredits) || 0) : (parseInt(additionalCredits) || 0))} credits monthly
+                      </p>
+                      
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-500" />
+                          200 base credits included
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-500" />
+                          10 accounts per platform
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-500" />
+                          Scheduling enabled
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-500" />
+                          Premium support
+                        </li>
+                      </ul>
+                    </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-foreground">Current Plan</h4>
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Crown className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                      <p className="font-medium">Free Plan</p>
-                      <p className="text-sm">100 credits per month</p>
-                      <Button variant="hero" className="mt-4">
-                        Upgrade Plan
-                      </Button>
+                  {/* Additional Credits Selector */}
+                  <div className="mt-6 p-4 bg-muted/10 rounded-lg">
+                    <Label className="text-sm font-medium text-foreground mb-3 block">
+                      Additional Credits (optional)
+                    </Label>
+                    <div className="flex gap-3 mb-3">
+                      <Select value={additionalCredits} onValueChange={setAdditionalCredits}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Choose additional credits" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">No additional credits</SelectItem>
+                          <SelectItem value="100">+100 credits (+$10/month)</SelectItem>
+                          <SelectItem value="250">+250 credits (+$25/month)</SelectItem>
+                          <SelectItem value="500">+500 credits (+$50/month)</SelectItem>
+                          <SelectItem value="1000">+1000 credits (+$100/month)</SelectItem>
+                          <SelectItem value="custom">Custom amount</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
+                    
+                    {additionalCredits === "custom" && (
+                      <Input
+                        type="number"
+                        placeholder="Enter custom credit amount"
+                        value={customCredits}
+                        onChange={(e) => setCustomCredits(e.target.value)}
+                        className="mt-2"
+                      />
+                    )}
+                    
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Additional credits are charged at $0.10 per credit. Perfect for scaling your content creation.
+                    </p>
                   </div>
 
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-foreground">Usage Statistics</h4>
-                    <div className="text-center py-8 text-muted-foreground">
-                      <CreditCard className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                      <p>No usage data available</p>
-                      <p className="text-sm">Start creating content to see your usage statistics</p>
-                    </div>
+                  <div className="flex gap-3 mt-6">
+                    <Button variant="hero" size="lg" className="flex-1">
+                      Upgrade to {selectedPlan === 'creator' ? 'Creator' : 'Entrepreneur'}
+                    </Button>
+                    <Button variant="outline" size="lg">
+                      Learn More
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

@@ -171,7 +171,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 
-                <Link to="/pricing" className="block mt-4">
+                <Link to="/settings?tab=billing" className="block mt-4">
                   <Button variant="neon" size="sm" className="w-full">
                     Upgrade Plan
                   </Button>
