@@ -68,14 +68,16 @@ const WorkflowSection = () => {
               }}
             >
               <Card className="bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all duration-200 h-full hover:scale-105 hover:shadow-glow-primary flex flex-col">
-                <CardContent className="p-6 text-center flex-1 flex flex-col justify-center">
+                <CardContent className="p-6 text-center flex-1 flex flex-col">
                   <div className="mb-4 flex justify-center">
                     <div className="p-3 rounded-full bg-gradient-hero hover:scale-110 transition-transform duration-300">
                       <step.icon className="h-6 w-6 text-background" />
                     </div>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
-                  <p className="text-sm text-muted-foreground">{step.description}</p>
+                  <div className="flex-1 flex flex-col justify-center">
+                    <h3 className="text-lg font-semibold mb-3 min-h-[3.5rem] flex items-center justify-center">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+                  </div>
                 </CardContent>
               </Card>
               {index < workflowSteps.length - 1 && (
