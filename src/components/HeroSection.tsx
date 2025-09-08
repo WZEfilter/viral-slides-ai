@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroPhone from "@/assets/hero-phone-mockup.jpg";
@@ -64,12 +65,23 @@ const HeroSection = () => {
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/demo">
-                <Button variant="glass" size="lg" className="group hover:scale-105 transition-all duration-300">
-                  <Play className="mr-2 h-5 w-5" />
-                  Watch demo
-                </Button>
-              </Link>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="glass" size="lg" className="group hover:scale-105 transition-all duration-300">
+                    <Play className="mr-2 h-5 w-5" />
+                    Watch demo
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-4xl">
+                  <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                    <div className="text-center text-muted-foreground">
+                      <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium">Video Placeholder</p>
+                      <p className="text-sm">Insert your demo video here</p>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             {/* Stats */}
