@@ -7,11 +7,11 @@ import { useState } from "react";
 import Navigation from "@/components/Navigation";
 
 const PricingPage = () => {
-  const [credits, setCredits] = useState([500]);
+  const [additionalCredits, setAdditionalCredits] = useState([0]);
   
-  const calculatePrice = (creditAmount: number) => {
-    const basePrice = Math.ceil(creditAmount / 100) * 5;
-    return basePrice;
+  const calculateAdditionalPrice = (additional: number) => {
+    // $0.05 per additional credit
+    return Math.ceil(additional * 0.05);
   };
 
   const plans = [
@@ -35,12 +35,13 @@ const PricingPage = () => {
     },
     {
       name: "Creator",
-      price: `$${calculatePrice(credits[0])}`,
+      price: `$${25 + calculateAdditionalPrice(additionalCredits[0])}`,
       period: "/month",
-      description: `${credits[0]} credits monthly`,
-      subDescription: "Rerolls & HQ models use more credits.",
+      description: `${200 + additionalCredits[0]} credits monthly`,
+      subDescription: "200 base credits + additional credits. Rerolls & HQ models use more credits.",
       features: [
-        `${credits[0]} credits monthly`,
+        "200 base credits included",
+        `+${additionalCredits[0]} additional credits`,
         "1 account per platform",
         "Scheduling enabled",
         "Draft/Publish anywhere",
@@ -52,12 +53,13 @@ const PricingPage = () => {
     },
     {
       name: "Entrepreneur",
-      price: `$${calculatePrice(credits[0]) * 2}`,
+      price: `$${49 + calculateAdditionalPrice(additionalCredits[0] * 2)}`,
       period: "/month",
-      description: `${credits[0] * 2} credits monthly`,
-      subDescription: "Rerolls & HQ models use more credits.",
+      description: `${200 + (additionalCredits[0] * 2)} credits monthly`,
+      subDescription: "200 base credits + 2x additional credits. Rerolls & HQ models use more credits.",
       features: [
-        `${credits[0] * 2} credits monthly`,
+        "200 base credits included",
+        `+${additionalCredits[0] * 2} additional credits`,
         "10 accounts per platform",
         "Scheduling enabled",
         "Draft/Publish anywhere",
@@ -86,32 +88,36 @@ const PricingPage = () => {
             </p>
           </div>
 
-          {/* Credit Slider */}
-          <div className="max-w-md mx-auto mb-16">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold text-foreground mb-2">Choose Your Credits</h3>
-              <p className="text-muted-foreground">Adjust the slider to see pricing for different credit amounts</p>
+          {/* Additional Credits Selector - Positioned above pricing cards */}
+          <div className="max-w-2xl mx-auto mb-12">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-semibold text-foreground mb-2">Customize Your Plan</h3>
+              <p className="text-muted-foreground">All plans include 200 base credits. Add more credits to scale your content creation.</p>
             </div>
-            <div className="bg-gradient-card border border-neo-purple/20 rounded-lg p-6">
-              <div className="mb-4">
-                <div className="text-center text-2xl font-bold text-neo-purple mb-2">
-                  {credits[0]} credits
+            <div className="bg-gradient-card border border-neo-purple/20 rounded-lg p-8">
+              <div className="text-center mb-6">
+                <div className="text-lg text-foreground mb-2">Additional Credits per Month</div>
+                <div className="text-3xl font-bold text-neo-purple mb-2">
+                  +{additionalCredits[0]} credits
                 </div>
-                <p className="text-sm text-muted-foreground text-center">
-                  ≈ {Math.floor(credits[0] / 6)} posts (assuming 6 images per post)
+                <p className="text-sm text-muted-foreground">
+                  Total: {200 + additionalCredits[0]} credits (≈ {Math.floor((200 + additionalCredits[0]) / 6)} posts)
                 </p>
               </div>
               <Slider
-                value={credits}
-                onValueChange={setCredits}
-                min={100}
-                max={2000}
-                step={100}
-                className="w-full"
+                value={additionalCredits}
+                onValueChange={setAdditionalCredits}
+                min={0}
+                max={1000}
+                step={50}
+                className="w-full mb-4"
               />
-              <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                <span>100</span>
-                <span>2000</span>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>+0</span>
+                <span>+1000</span>
+              </div>
+              <div className="text-center mt-4 text-sm text-muted-foreground">
+                Additional credits: ${calculateAdditionalPrice(additionalCredits[0])}/month
               </div>
             </div>
           </div>
