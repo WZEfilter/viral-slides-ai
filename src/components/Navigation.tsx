@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Zap, User } from "lucide-react";
+import { Menu, X, Zap, User, LayoutDashboard, Plus, FolderOpen, BarChart3, Settings as SettingsIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -11,10 +11,27 @@ const Navigation = () => {
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useAuth();
 
-  const navItems = [
+  // Check if user is on dashboard pages
+  const isDashboardPage = isAuthenticated && (
+    location.pathname.startsWith('/dashboard') ||
+    location.pathname.startsWith('/create') ||
+    location.pathname.startsWith('/my-scenarios') ||
+    location.pathname.startsWith('/results') ||
+    location.pathname.startsWith('/settings')
+  );
+
+  const landingNavItems = [
     { name: "Overview", href: "/" },
     { name: "Features", href: "/features" },
     { name: "Pricing", href: "/pricing" },
+  ];
+
+  const dashboardNavItems = [
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Create", href: "/create", icon: Plus },
+    { name: "My Scenarios", href: "/my-scenarios", icon: FolderOpen },
+    { name: "Results", href: "/results", icon: BarChart3 },
+    { name: "Settings", href: "/settings", icon: SettingsIcon },
   ];
 
   return (
@@ -33,21 +50,48 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <div className="flex items-center space-x-1 bg-muted/50 rounded-full p-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    location.pathname === item.href
-                      ? "bg-neo-purple text-background shadow-glow-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
+            {isDashboardPage ? (
+              <div className="flex items-center space-x-1">
+                {dashboardNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.href || 
+                    (item.href === "/settings" && location.pathname.startsWith("/settings"));
+                  
+                  return (
+                    <Link key={item.name} to={item.href}>
+                      <Button
+                        variant={isActive ? "default" : "ghost"}
+                        size="sm"
+                        className={`flex items-center gap-2 ${
+                          isActive 
+                            ? "bg-neo-purple text-background shadow-glow-primary" 
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {item.name}
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="flex items-center space-x-1 bg-muted/50 rounded-full p-1">
+                {landingNavItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      location.pathname === item.href
+                        ? "bg-neo-purple text-background shadow-glow-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* CTA Buttons */}
@@ -116,20 +160,44 @@ const Navigation = () => {
         {isOpen && (
           <div className="md:hidden py-4 border-t border-neo-purple/20">
             <div className="flex flex-col space-y-3">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    location.pathname === item.href
-                      ? "bg-neo-purple text-background"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {isDashboardPage ? (
+                dashboardNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.href || 
+                    (item.href === "/settings" && location.pathname.startsWith("/settings"));
+                  
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        isActive
+                          ? "bg-neo-purple text-background"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {item.name}
+                    </Link>
+                  );
+                })
+              ) : (
+                landingNavItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      location.pathname === item.href
+                        ? "bg-neo-purple text-background"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))
+              )}
               <div className="flex flex-col space-y-2 pt-4 border-t border-neo-purple/20">
                 {isAuthenticated ? (
                   <>

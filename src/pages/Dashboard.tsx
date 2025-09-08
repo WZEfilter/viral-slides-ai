@@ -4,7 +4,6 @@ import { Progress } from "@/components/ui/progress";
 import { Plus, Calendar, TrendingUp, Users, Zap, FolderOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
-import DashboardNavigation from "@/components/DashboardNavigation";
 import { useProfile } from "@/hooks/useProfile";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
@@ -31,8 +30,7 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-gradient-primary">
         <Navigation />
-        <DashboardNavigation />
-        <div className="pt-8 pb-16 flex items-center justify-center">
+        <div className="pt-24 pb-16 flex items-center justify-center">
           <LoadingSpinner size="lg" />
         </div>
       </div>
@@ -42,9 +40,8 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-primary">
       <Navigation />
-      <DashboardNavigation />
       
-      <div className="pt-8 pb-16">
+      <div className="pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">

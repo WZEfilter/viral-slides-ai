@@ -18,7 +18,6 @@ import {
   MoreHorizontal
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
-import DashboardNavigation from "@/components/DashboardNavigation";
 import { useScenarios } from "@/hooks/useScenarios";
 import { formatDistanceToNow } from "date-fns";
 
@@ -83,8 +82,7 @@ const MyScenarios = () => {
     return (
       <div className="min-h-screen bg-gradient-primary">
         <Navigation />
-        <DashboardNavigation />
-        <div className="pt-8 pb-16 flex items-center justify-center">
+        <div className="pt-24 pb-16 flex items-center justify-center">
           <LoadingSpinner size="lg" />
         </div>
       </div>
@@ -168,9 +166,8 @@ const MyScenarios = () => {
   return (
     <div className="min-h-screen bg-gradient-primary">
       <Navigation />
-      <DashboardNavigation />
       
-      <div className="pt-8 pb-16">
+      <div className="pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">

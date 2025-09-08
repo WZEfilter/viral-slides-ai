@@ -10,7 +10,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import Navigation from '@/components/Navigation';
-import DashboardNavigation from '@/components/DashboardNavigation';
 import { ProfileSettings } from '@/components/ProfileSettings';
 import { usePlatforms } from '@/hooks/usePlatforms';
 import { useProfile } from '@/hooks/useProfile';
@@ -80,9 +79,8 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-gradient-primary">
       <Navigation />
-      <DashboardNavigation />
       
-      <div className="pt-8 pb-16">
+      <div className="pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
