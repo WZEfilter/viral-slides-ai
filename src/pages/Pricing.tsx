@@ -1,17 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Check, Star, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 
 const PricingPage = () => {
-  const [additionalCredits, setAdditionalCredits] = useState([0]);
+  const [creatorCredits, setCreatorCredits] = useState("0");
+  const [entrepreneurCredits, setEntrepreneurCredits] = useState("0");
   
   const calculateAdditionalPrice = (additional: number) => {
-    // $0.05 per additional credit
-    return Math.ceil(additional * 0.05);
+    // $0.10 per additional credit
+    return additional * 0.10;
   };
 
   const plans = [
@@ -35,13 +37,13 @@ const PricingPage = () => {
     },
     {
       name: "Creator",
-      price: `$${25 + calculateAdditionalPrice(additionalCredits[0])}`,
+      price: `$${25 + calculateAdditionalPrice(parseInt(creatorCredits) || 0)}`,
       period: "/month",
-      description: `${200 + additionalCredits[0]} credits monthly`,
+      description: `${200 + (parseInt(creatorCredits) || 0)} credits monthly`,
       subDescription: "200 base credits + additional credits. Rerolls & HQ models use more credits.",
       features: [
         "200 base credits included",
-        `+${additionalCredits[0]} additional credits`,
+        `+${parseInt(creatorCredits) || 0} additional credits`,
         "1 account per platform",
         "Scheduling enabled",
         "Draft/Publish anywhere",
@@ -50,16 +52,18 @@ const PricingPage = () => {
       cta: "Get Creator",
       variant: "neon" as const,
       popular: true,
+      creditsState: creatorCredits,
+      setCreditsState: setCreatorCredits,
     },
     {
       name: "Entrepreneur",
-      price: `$${49 + calculateAdditionalPrice(additionalCredits[0] * 2)}`,
+      price: `$${49 + calculateAdditionalPrice(parseInt(entrepreneurCredits) || 0)}`,
       period: "/month",
-      description: `${200 + (additionalCredits[0] * 2)} credits monthly`,
-      subDescription: "200 base credits + 2x additional credits. Rerolls & HQ models use more credits.",
+      description: `${200 + (parseInt(entrepreneurCredits) || 0)} credits monthly`,
+      subDescription: "200 base credits + additional credits. Rerolls & HQ models use more credits.",
       features: [
         "200 base credits included",
-        `+${additionalCredits[0] * 2} additional credits`,
+        `+${parseInt(entrepreneurCredits) || 0} additional credits`,
         "10 accounts per platform",
         "Scheduling enabled",
         "Draft/Publish anywhere",
@@ -68,6 +72,8 @@ const PricingPage = () => {
       cta: "Get Entrepreneur",
       variant: "premium" as const,
       popular: false,
+      creditsState: entrepreneurCredits,
+      setCreditsState: setEntrepreneurCredits,
     },
   ];
 
@@ -86,40 +92,6 @@ const PricingPage = () => {
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Choose the plan that fits your investments. Scale credits with the slider for more posts.
             </p>
-          </div>
-
-          {/* Additional Credits Selector - Positioned above pricing cards */}
-          <div className="max-w-2xl mx-auto mb-12">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-semibold text-foreground mb-2">Customize Your Plan</h3>
-              <p className="text-muted-foreground">All plans include 200 base credits. Add more credits to scale your content creation.</p>
-            </div>
-            <div className="bg-gradient-card border border-neo-purple/20 rounded-lg p-8">
-              <div className="text-center mb-6">
-                <div className="text-lg text-foreground mb-2">Additional Credits per Month</div>
-                <div className="text-3xl font-bold text-neo-purple mb-2">
-                  +{additionalCredits[0]} credits
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Total: {200 + additionalCredits[0]} credits (≈ {Math.floor((200 + additionalCredits[0]) / 6)} posts)
-                </p>
-              </div>
-              <Slider
-                value={additionalCredits}
-                onValueChange={setAdditionalCredits}
-                min={0}
-                max={1000}
-                step={50}
-                className="w-full mb-4"
-              />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>+0</span>
-                <span>+1000</span>
-              </div>
-              <div className="text-center mt-4 text-sm text-muted-foreground">
-                Additional credits: ${calculateAdditionalPrice(additionalCredits[0])}/month
-              </div>
-            </div>
           </div>
 
           {/* Pricing Cards */}
@@ -151,6 +123,39 @@ const PricingPage = () => {
                     <p className="text-sm text-muted-foreground mt-1">{plan.subDescription}</p>
                   )}
                 </div>
+
+                {/* Credit Selection Dropdown - Only for paid plans */}
+                {plan.name !== "Free" && plan.creditsState !== undefined && plan.setCreditsState && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Additional Credits
+                    </label>
+                    <Select value={plan.creditsState} onValueChange={plan.setCreditsState}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select additional credits" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="custom">
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="number"
+                              placeholder="Custom amount"
+                              className="w-32"
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={(e) => plan.setCreditsState?.(e.target.value)}
+                              value={plan.creditsState === "custom" ? "" : plan.creditsState}
+                            />
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="0">0 credits (+$0)</SelectItem>
+                        <SelectItem value="100">100 credits (+$10)</SelectItem>
+                        <SelectItem value="300">300 credits (+$30)</SelectItem>
+                        <SelectItem value="500">500 credits (+$50)</SelectItem>
+                        <SelectItem value="1000">1000 credits (+$100)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 <div className="space-y-4 mb-8 flex-grow">
                   {plan.features.map((feature) => (
