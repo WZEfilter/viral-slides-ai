@@ -14,8 +14,8 @@ const PricingPage = () => {
   const [entrepreneurCustom, setEntrepreneurCustom] = useState("");
   
   const calculateAdditionalPrice = (additional: number) => {
-    // $0.10 per additional credit
-    return additional * 0.10;
+    // $0.10 per additional credit, properly rounded to avoid floating point precision issues
+    return Math.round(additional * 10) / 100; // Convert to cents, then back to dollars
   };
 
   const plans = [
