@@ -89,7 +89,14 @@ const Navigation = () => {
                         e.preventDefault();
                         const element = document.getElementById('features');
                         if (element) {
-                          element.scrollIntoView({ behavior: 'smooth' });
+                          const navHeight = 64; // Height of fixed navigation
+                          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                          const offsetPosition = elementPosition - navHeight;
+                          
+                          window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                          });
                         }
                       }}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
@@ -209,14 +216,21 @@ const Navigation = () => {
                     <a
                       key={item.name}
                       href={item.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const element = document.getElementById('features');
-                        if (element) {
-                          element.scrollIntoView({ behavior: 'smooth' });
-                        }
-                        setIsOpen(false);
-                      }}
+                       onClick={(e) => {
+                         e.preventDefault();
+                         const element = document.getElementById('features');
+                         if (element) {
+                           const navHeight = 64; // Height of fixed navigation
+                           const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                           const offsetPosition = elementPosition - navHeight;
+                           
+                           window.scrollTo({
+                             top: offsetPosition,
+                             behavior: 'smooth'
+                           });
+                         }
+                         setIsOpen(false);
+                       }}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                         location.pathname === "/" && location.hash === "#features"
                           ? "bg-neo-purple text-background"
