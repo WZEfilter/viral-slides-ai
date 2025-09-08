@@ -67,8 +67,8 @@ const WorkflowSection = () => {
                 transitionDelay: stepsVisible ? `${index * 150}ms` : '0ms'
               }}
             >
-              <Card className="bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all duration-200 h-full hover:scale-105 hover:shadow-glow-primary">
-                <CardContent className="p-6 text-center">
+              <Card className="bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all duration-200 h-full hover:scale-105 hover:shadow-glow-primary flex flex-col">
+                <CardContent className="p-6 text-center flex-1 flex flex-col justify-center">
                   <div className="mb-4 flex justify-center">
                     <div className="p-3 rounded-full bg-gradient-hero hover:scale-110 transition-transform duration-300">
                       <step.icon className="h-6 w-6 text-background" />

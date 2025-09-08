@@ -21,7 +21,7 @@ const Navigation = () => {
 
   const landingNavItems = [
     { name: "Overview", href: "/" },
-    { name: "Features", href: "/features" },
+    { name: "Features", href: "/#features", scroll: true },
     { name: "Pricing", href: "/pricing" },
   ];
 
@@ -81,17 +81,38 @@ const Navigation = () => {
             ) : (
               <div className="flex items-center space-x-1 bg-muted/50 rounded-full p-1">
                 {landingNavItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      location.pathname === item.href
-                        ? "bg-neo-purple text-background shadow-glow-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
+                  item.scroll ? (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const element = document.getElementById('features');
+                        if (element) {
+                          element.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                        location.pathname === "/" && location.hash === "#features"
+                          ? "bg-neo-purple text-background shadow-glow-primary"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                      }`}
+                    >
+                      {item.name}
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        location.pathname === item.href
+                          ? "bg-neo-purple text-background shadow-glow-primary"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  )
                 ))}
               </div>
             )}
@@ -184,18 +205,40 @@ const Navigation = () => {
                 })
               ) : (
                 landingNavItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      location.pathname === item.href
-                        ? "bg-neo-purple text-background"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
+                  item.scroll ? (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const element = document.getElementById('features');
+                        if (element) {
+                          element.scrollIntoView({ behavior: 'smooth' });
+                        }
+                        setIsOpen(false);
+                      }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                        location.pathname === "/" && location.hash === "#features"
+                          ? "bg-neo-purple text-background"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                      }`}
+                    >
+                      {item.name}
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        location.pathname === item.href
+                          ? "bg-neo-purple text-background"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  )
                 ))
               )}
               <div className="flex flex-col space-y-2 pt-4 border-t border-neo-purple/20">
