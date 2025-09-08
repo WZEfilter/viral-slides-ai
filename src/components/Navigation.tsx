@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Zap, User, LayoutDashboard, Plus, FolderOpen, Settings as SettingsIcon } from "lucide-react";
@@ -8,8 +8,30 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("overview");
   const location = useLocation();
   const { isAuthenticated, user, signOut } = useAuth();
+
+  // Scroll detection for section highlighting
+  useEffect(() => {
+    const handleScroll = () => {
+      const featuresSection = document.getElementById('features');
+      if (featuresSection && location.pathname === '/') {
+        const featuresTop = featuresSection.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        
+        // If features section is in the top half of the viewport, highlight it
+        if (featuresTop <= windowHeight * 0.3) {
+          setActiveSection("features");
+        } else {
+          setActiveSection("overview");
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [location.pathname]);
 
   // Check if user is on dashboard pages
   const isDashboardPage = isAuthenticated && (
@@ -79,8 +101,14 @@ const Navigation = () => {
                 })}
               </div>
             ) : (
-              <div className="flex items-center space-x-1 bg-muted/50 rounded-full p-1">
-                {landingNavItems.map((item) => (
+              <div className="relative flex items-center space-x-1 bg-muted/50 rounded-full p-1">
+                {/* Sliding indicator */}
+                <div 
+                  className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out ${
+                    activeSection === "features" ? "translate-x-[100%] w-[88px]" : "translate-x-0 w-[88px]"
+                  }`}
+                />
+                {landingNavItems.map((item, index) => (
                   item.scroll ? (
                     <a
                       key={item.name}
@@ -99,10 +127,10 @@ const Navigation = () => {
                           });
                         }
                       }}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                        location.pathname === "/" && location.hash === "#features"
-                          ? "bg-neo-purple text-background shadow-glow-primary"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                      className={`relative z-10 px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                        activeSection === "features"
+                          ? "text-background"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {item.name}
@@ -111,10 +139,11 @@ const Navigation = () => {
                     <Link
                       key={item.name}
                       to={item.href}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                        location.pathname === item.href
-                          ? "bg-neo-purple text-background shadow-glow-primary"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                      className={`relative z-10 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        (activeSection === "overview" && item.href === "/") ||
+                        (location.pathname === item.href && item.href !== "/")
+                          ? "text-background"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {item.name}
