@@ -26,17 +26,6 @@ const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Hero Content */}
           <div className="text-center lg:text-left">
-            {/* Badge */}
-            <div 
-              ref={badgeRef}
-              className={`inline-flex items-center px-4 py-2 rounded-full bg-gradient-glass backdrop-blur-md border border-neo-purple/20 text-sm font-medium text-foreground mb-6 hover:border-neo-purple/40 transition-all duration-700 ${
-                badgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-              }`}
-            >
-              <Sparkles className="h-4 w-4 mr-2 text-neo-purple" />
-              AI-Powered Social Media Revolution
-            </div>
-
             {/* Main Headline */}
             <h1 
               ref={headlineRef}
@@ -45,9 +34,8 @@ const HeroSection = () => {
               }`}
               style={{ transitionDelay: headlineVisible ? '200ms' : '0ms' }}
             >
-              <span className="block text-foreground">Take control of your</span>
               <span className="block bg-gradient-hero bg-clip-text text-transparent">
-                Viral Content
+                The #1 AI Tool for TikTok Slideshow Automation
               </span>
             </h1>
 
@@ -59,8 +47,7 @@ const HeroSection = () => {
               }`}
               style={{ transitionDelay: subtitleVisible ? '400ms' : '0ms' }}
             >
-              Generate stunning slideshow carousels and 1:02 videos for TikTok, Instagram & Pinterest. 
-              <span className="text-neo-purple font-semibold"> Post directly or save as drafts.</span>
+              Your 24/7 AI slideshow machine — post daily, grow fast, earn passively.
             </p>
 
             {/* CTA Buttons */}
