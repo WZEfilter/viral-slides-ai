@@ -1,10 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
 import { Check, Star, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 
 const PricingPage = () => {
+  const [credits, setCredits] = useState([500]);
+  
+  const calculatePrice = (creditAmount: number) => {
+    const basePrice = Math.ceil(creditAmount / 100) * 5;
+    return basePrice;
+  };
+
   const plans = [
     {
       name: "Free",
@@ -19,7 +28,6 @@ const PricingPage = () => {
       ],
       limitations: [
         "No scheduling",
-        "Limited generation speed",
       ],
       cta: "Start for free",
       variant: "glass" as const,
@@ -27,17 +35,15 @@ const PricingPage = () => {
     },
     {
       name: "Creator",
-      price: "$20",
+      price: `$${calculatePrice(credits[0])}`,
       period: "/month",
-      description: "180 credits — up to 30 posts",
-      subDescription: "(assumes 6 images/post). Rerolls & HQ models use more credits.",
+      description: `${credits[0]} credits monthly`,
+      subDescription: "Rerolls & HQ models use more credits.",
       features: [
-        "180 credits monthly",
+        `${credits[0]} credits monthly`,
         "1 account per platform",
         "Scheduling enabled",
         "Draft/Publish anywhere",
-        "Bulk scenario run",
-        "Priority queue",
         "Premium support",
       ],
       cta: "Get Creator",
@@ -46,19 +52,16 @@ const PricingPage = () => {
     },
     {
       name: "Entrepreneur",
-      price: "$39",
-      period: "/month (Founder)",
-      description: "180 credits — up to 30 posts",
-      subDescription: "(assumes 6 images/post). Rerolls & HQ models use more credits.",
+      price: `$${calculatePrice(credits[0]) * 2}`,
+      period: "/month",
+      description: `${credits[0] * 2} credits monthly`,
+      subDescription: "Rerolls & HQ models use more credits.",
       features: [
-        "180 credits monthly",
-        "5 accounts per platform",
+        `${credits[0] * 2} credits monthly`,
+        "10 accounts per platform",
         "Scheduling enabled",
         "Draft/Publish anywhere",
-        "Bulk scenario run",
-        "Priority queue",
         "Premium support",
-        "Extra accounts +$10/account/mo",
       ],
       cta: "Get Entrepreneur",
       variant: "premium" as const,
@@ -81,6 +84,36 @@ const PricingPage = () => {
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Choose the plan that fits your investments. Scale credits with the slider for more posts.
             </p>
+          </div>
+
+          {/* Credit Slider */}
+          <div className="max-w-md mx-auto mb-16">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold text-foreground mb-2">Choose Your Credits</h3>
+              <p className="text-muted-foreground">Adjust the slider to see pricing for different credit amounts</p>
+            </div>
+            <div className="bg-gradient-card border border-neo-purple/20 rounded-lg p-6">
+              <div className="mb-4">
+                <div className="text-center text-2xl font-bold text-neo-purple mb-2">
+                  {credits[0]} credits
+                </div>
+                <p className="text-sm text-muted-foreground text-center">
+                  ≈ {Math.floor(credits[0] / 6)} posts (assuming 6 images per post)
+                </p>
+              </div>
+              <Slider
+                value={credits}
+                onValueChange={setCredits}
+                min={100}
+                max={2000}
+                step={100}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                <span>100</span>
+                <span>2000</span>
+              </div>
+            </div>
           </div>
 
           {/* Pricing Cards */}
