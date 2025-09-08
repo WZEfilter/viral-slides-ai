@@ -210,29 +210,32 @@ const Settings = () => {
                         <Crown className="h-4 w-4 text-yellow-500" />
                         <span className="font-semibold text-foreground">Free Plan</span>
                       </div>
-                      <p className="text-sm text-muted-foreground">{profile?.credits_limit || 100} credits per month</p>
+                      <p className="text-sm text-muted-foreground">6 images every 3 days</p>
                     </div>
                     
-                    {/* This Month's Usage */}
+                    {/* Current Usage */}
                     <div className="p-4 bg-gradient-card border border-neo-blue/20 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
                         <Calendar className="h-4 w-4 text-neo-blue" />
-                        <span className="font-semibold text-foreground">This Month</span>
+                        <span className="font-semibold text-foreground">Current Period</span>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {usedThisMonth} / {profile?.credits_limit || 100} credits used
+                        {usedThisMonth} / 6 images used
                       </p>
                       <Progress 
-                        value={((profile?.credits_limit || 100) - usedThisMonth) / (profile?.credits_limit || 100) * 100} 
+                        value={(6 - usedThisMonth) / 6 * 100} 
                         className="h-2 mt-2"
                       />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Resets every 3 days
+                      </p>
                     </div>
                   </div>
                   
                   <Alert>
                     <Zap className="h-4 w-4" />
                     <AlertDescription>
-                      <strong>Good news!</strong> Unused credits carry forward to the next month, so you never lose your investment.
+                      <strong>Free Plan:</strong> Get 6 images every 3 days. For unlimited usage and monthly credits that carry forward, upgrade to a paid plan.
                     </AlertDescription>
                   </Alert>
                 </CardContent>
