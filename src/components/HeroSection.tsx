@@ -127,14 +127,12 @@ const HeroSection = () => {
               </div>
               
               {/* Floating Cards */}
-              <div className="absolute -top-8 -left-8 bg-gradient-card backdrop-blur-md rounded-xl p-4 border border-neo-purple/20 animate-float hover:scale-110 transition-transform duration-300">
-                <div className="text-sm font-semibold text-foreground">6 Slides Generated</div>
-                <div className="text-xs text-muted-foreground">Ready to post</div>
+              <div className="absolute -top-8 -left-8 bg-gradient-card backdrop-blur-md rounded-xl p-4 border border-neo-purple/20 animate-fade-in hover:scale-110 transition-transform duration-300" style={{ animationDelay: "1s" }}>
+                <div className="text-sm font-semibold text-foreground">AI Generate Images</div>
               </div>
               
-              <div className="absolute -bottom-8 -right-8 bg-gradient-card backdrop-blur-md rounded-xl p-4 border border-neo-pink/20 animate-float hover:scale-110 transition-transform duration-300" style={{ animationDelay: "0.5s" }}>
-                <div className="text-sm font-semibold text-foreground">1:02 Video</div>
-                <div className="text-xs text-muted-foreground">Auto-generated</div>
+              <div className="absolute -bottom-8 -right-8 bg-gradient-card backdrop-blur-md rounded-xl p-4 border border-neo-pink/20 animate-fade-in hover:scale-110 transition-transform duration-300" style={{ animationDelay: "1.3s" }}>
+                <div className="text-sm font-semibold text-foreground">Post Automatically</div>
               </div>
             </div>
 
