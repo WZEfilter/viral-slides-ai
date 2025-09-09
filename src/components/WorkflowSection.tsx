@@ -67,7 +67,7 @@ const WorkflowSection = () => {
                 transitionDelay: stepsVisible ? `${index * 150}ms` : '0ms'
               }}
             >
-              <Card className="bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all duration-200 h-full hover:scale-105 hover:shadow-glow-primary flex flex-col">
+              <Card className="bg-gradient-glass backdrop-blur-md border border-neo-purple/20 hover:border-neo-purple/40 transition-all duration-300 h-full hover:scale-105 hover:shadow-glow-primary flex flex-col">
                 <CardContent className="p-6 text-center flex-1 flex flex-col">
                   <div className="mb-4 flex justify-center">
                     <div className="p-3 rounded-full bg-gradient-hero hover:scale-110 transition-transform duration-300">
@@ -97,9 +97,9 @@ const WorkflowSection = () => {
           className="grid lg:grid-cols-2 gap-12"
         >
           {/* Slideshow Images */}
-          <div className={`bg-gradient-card backdrop-blur-md rounded-2xl p-8 border border-neo-purple/20 transition-all duration-700 hover:scale-105 hover:shadow-glow-primary ${
+          <div className={`bg-gradient-card backdrop-blur-md rounded-2xl p-8 border border-neo-purple/20 transition-all duration-300 hover:scale-105 hover:shadow-glow-primary ${
             contentTypesVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
-          }`}>
+          }`} style={{ transitionDelay: contentTypesVisible ? '0ms' : '0ms' }}>
             <div className="flex items-center mb-6">
               <div className="p-3 rounded-full bg-gradient-to-r from-neo-purple to-neo-pink mr-4 hover:scale-110 transition-transform duration-300">
                 <Image className="h-6 w-6 text-background" />
@@ -147,7 +147,7 @@ const WorkflowSection = () => {
           </div>
 
           {/* Slideshow Videos */}
-          <div className={`bg-gradient-card backdrop-blur-md rounded-2xl p-8 border border-neo-pink/20 transition-all duration-700 hover:scale-105 hover:shadow-glow-accent ${
+          <div className={`bg-gradient-card backdrop-blur-md rounded-2xl p-8 border border-neo-pink/20 transition-all duration-300 hover:scale-105 hover:shadow-glow-accent ${
             contentTypesVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
           }`} style={{ transitionDelay: contentTypesVisible ? '200ms' : '0ms' }}>
             <div className="flex items-center mb-6">
