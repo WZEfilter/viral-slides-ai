@@ -83,7 +83,7 @@ const WorkflowSection = () => {
                 </CardContent>
               </Card>
               {index < workflowSteps.length - 1 && (
-                <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                <div className="hidden md:block absolute top-1/2 right-[-16px] transform -translate-y-1/2 z-10">
                   <ArrowRight className="h-6 w-6 text-neo-purple animate-pulse" />
                 </div>
               )}
