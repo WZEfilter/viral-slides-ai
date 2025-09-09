@@ -90,9 +90,9 @@ const Navigation = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center justify-center flex-1 px-8">
+          <div className="hidden md:flex items-center justify-center flex-1">
             {isDashboardPage ? (
-              <div className="flex items-center justify-center space-x-2 w-full max-w-md mx-auto">
+              <div className="flex items-center space-x-1 bg-muted/50 rounded-full p-1">
                 {dashboardNavItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = location.pathname === item.href || 
@@ -103,10 +103,10 @@ const Navigation = () => {
                       <Button
                         variant={isActive ? "default" : "ghost"}
                         size="sm"
-                        className={`flex items-center gap-2 ${
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
                           isActive 
                             ? "bg-neo-purple text-background shadow-glow-primary" 
-                            : "text-muted-foreground hover:text-foreground"
+                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                         }`}
                       >
                         <Icon className="h-4 w-4" />
@@ -186,11 +186,19 @@ const Navigation = () => {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-3 min-w-0 flex-shrink-0">
             {isAuthenticated ? (
-              <>
+              <div className="flex items-center space-x-3">
                 {!isDashboardPage && (
                   <Link to="/dashboard">
                     <Button variant="ghost" size="sm">
                       Dashboard
+                    </Button>
+                  </Link>
+                )}
+                {isDashboardPage && (
+                  <Link to="/create">
+                    <Button variant="hero" size="sm">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create
                     </Button>
                   </Link>
                 )}
@@ -213,7 +221,7 @@ const Navigation = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </>
+              </div>
             ) : (
               <>
                 <Link to="/auth">
