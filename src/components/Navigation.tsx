@@ -92,7 +92,7 @@ const Navigation = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center justify-center flex-1 px-8">
             {isDashboardPage ? (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-center space-x-2 w-full max-w-md mx-auto">
                 {dashboardNavItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = location.pathname === item.href || 
