@@ -117,7 +117,7 @@ const HeroSection = () => {
             style={{ transitionDelay: visualVisible ? '400ms' : '0ms' }}
           >
             {/* Secondary Porsche - Behind main screen, popping out */}
-            <div className="absolute top-12 -left-8 sm:-left-12 lg:-left-16 z-0 opacity-70 group-hover:opacity-85 transition-all duration-500 hover:scale-105">
+            <div className="absolute top-12 -left-2 sm:left-0 lg:left-4 z-0 opacity-70 group-hover:opacity-85 transition-all duration-500 hover:scale-105">
               <div className="bg-gradient-glass backdrop-blur-md rounded-2xl p-2 border border-neo-purple/10 transform -rotate-12 scale-70">
                 <img
                   src={porscheHero}
