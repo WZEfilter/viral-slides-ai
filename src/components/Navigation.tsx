@@ -65,7 +65,6 @@ const Navigation = () => {
 
   const dashboardNavItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Create", href: "/create", icon: Plus },
     { name: "My Scenarios", href: "/my-scenarios", icon: FolderOpen },
     { name: "Settings", href: "/settings", icon: SettingsIcon },
   ];
