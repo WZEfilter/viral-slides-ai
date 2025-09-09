@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroPhone from "@/assets/hero-phone-mockup.jpg";
+import porscheHero from "/lovable-uploads/7b2460bd-29ec-42bf-b140-4cdf13c91eea.png";
+import mclarenHero from "/lovable-uploads/f7823878-faf6-415b-a9c9-a973a2bc027e.png";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 const HeroSection = () => {
@@ -115,14 +116,14 @@ const HeroSection = () => {
             }`}
             style={{ transitionDelay: visualVisible ? '400ms' : '0ms' }}
           >
-            {/* Main Phone */}
+            {/* Main Porsche */}
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-hero rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-all duration-500" />
               <div className="relative bg-gradient-glass backdrop-blur-md rounded-3xl p-4 border border-neo-purple/20 shadow-glass hover:border-neo-purple/40 hover:scale-105 transition-all duration-500">
                 <img
-                  src={heroPhone}
-                  alt="ViralSlides AI mobile app interface"
-                  className="w-80 h-auto rounded-2xl"
+                  src={porscheHero}
+                  alt="Purple Porsche sports car with futuristic design"
+                  className="w-80 h-auto rounded-2xl opacity-100"
                 />
               </div>
               
@@ -136,13 +137,13 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Secondary Phone */}
-            <div className="absolute top-12 right-16 opacity-60 group-hover:opacity-80 transition-all duration-500 hover:scale-105">
+            {/* Secondary McLaren */}
+            <div className="absolute top-12 right-16 opacity-80 group-hover:opacity-90 transition-all duration-500 hover:scale-105">
               <div className="bg-gradient-glass backdrop-blur-md rounded-2xl p-2 border border-neo-purple/10 transform rotate-12 scale-75">
                 <img
-                  src={heroPhone}
-                  alt="Secondary phone showing ViralSlides AI"
-                  className="w-64 h-auto rounded-xl"
+                  src={mclarenHero}
+                  alt="Purple McLaren supercar with dynamic background"
+                  className="w-64 h-auto rounded-xl opacity-100"
                 />
               </div>
             </div>
