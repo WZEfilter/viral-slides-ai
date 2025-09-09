@@ -116,13 +116,13 @@ const HeroSection = () => {
             }`}
             style={{ transitionDelay: visualVisible ? '400ms' : '0ms' }}
           >
-            {/* Main Porsche */}
+            {/* Main McLaren */}
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-hero rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-all duration-500" />
-              <div className="relative bg-gradient-glass backdrop-blur-md rounded-3xl p-4 border border-neo-purple/20 shadow-glass hover:border-neo-purple/40 hover:scale-105 transition-all duration-500">
+              <div className="relative bg-gradient-glass backdrop-blur-md rounded-3xl p-4 border border-neo-purple/20 shadow-glass hover:border-neo-purple/40 hover:scale-105 transition-all duration-500 transform rotate-3">
                 <img
-                  src={porscheHero}
-                  alt="Purple Porsche sports car with futuristic design"
+                  src={mclarenHero}
+                  alt="Purple McLaren supercar with dynamic background"
                   className="w-80 h-auto rounded-2xl opacity-100"
                 />
               </div>
@@ -137,12 +137,12 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Secondary McLaren */}
-            <div className="absolute top-12 right-16 opacity-80 group-hover:opacity-90 transition-all duration-500 hover:scale-105">
-              <div className="bg-gradient-glass backdrop-blur-md rounded-2xl p-2 border border-neo-purple/10 transform rotate-12 scale-75">
+            {/* Secondary Porsche */}
+            <div className="absolute top-16 -right-8 z-0 opacity-70 group-hover:opacity-85 transition-all duration-500 hover:scale-105">
+              <div className="bg-gradient-glass backdrop-blur-md rounded-2xl p-2 border border-neo-purple/10 transform -rotate-12 scale-75">
                 <img
-                  src={mclarenHero}
-                  alt="Purple McLaren supercar with dynamic background"
+                  src={porscheHero}
+                  alt="Purple Porsche sports car with futuristic design"
                   className="w-64 h-auto rounded-xl opacity-100"
                 />
               </div>
