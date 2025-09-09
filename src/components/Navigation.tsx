@@ -70,8 +70,8 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-neo-purple/20">
-      <div className="w-full overflow-x-hidden">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-neo-purple/20" style={{ width: '100vw' }}>
+      <div className="w-full" style={{ width: '100%', paddingRight: 'calc(100vw - 100%)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 w-full">
           {/* Logo */}

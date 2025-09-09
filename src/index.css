@@ -81,4 +81,8 @@ All colors MUST be HSL.
     overflow-x: hidden;
     scrollbar-gutter: stable;
   }
+  
+  html {
+    scrollbar-gutter: stable;
+  }
 }
