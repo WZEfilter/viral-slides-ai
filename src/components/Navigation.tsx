@@ -15,17 +15,28 @@ const Navigation = () => {
   // Scroll detection for section highlighting
   useEffect(() => {
     const handleScroll = () => {
-      const featuresSection = document.getElementById('features');
-      if (featuresSection && location.pathname === '/') {
-        const featuresTop = featuresSection.getBoundingClientRect().top;
+      if (location.pathname === '/') {
+        const featuresSection = document.getElementById('features');
+        const pricingSection = document.getElementById('pricing');
         const windowHeight = window.innerHeight;
         
-        // If features section is in the top half of the viewport, highlight it
-        if (featuresTop <= windowHeight * 0.3) {
-          setActiveSection("features");
-        } else {
-          setActiveSection("overview");
+        if (pricingSection) {
+          const pricingTop = pricingSection.getBoundingClientRect().top;
+          if (pricingTop <= windowHeight * 0.3) {
+            setActiveSection("pricing");
+            return;
+          }
         }
+        
+        if (featuresSection) {
+          const featuresTop = featuresSection.getBoundingClientRect().top;
+          if (featuresTop <= windowHeight * 0.3) {
+            setActiveSection("features");
+            return;
+          }
+        }
+        
+        setActiveSection("overview");
       } else {
         // Reset to overview when not on landing page
         setActiveSection("overview");
@@ -48,8 +59,8 @@ const Navigation = () => {
 
   const landingNavItems = [
     { name: "Overview", href: "/" },
-    { name: "Features", href: "/#features", scroll: true },
-    { name: "Pricing", href: "/pricing" },
+    { name: "Features", href: "/#features", scroll: true, target: "features" },
+    { name: "Pricing", href: "/#pricing", scroll: true, target: "pricing" },
   ];
 
   const dashboardNavItems = [
@@ -110,23 +121,23 @@ const Navigation = () => {
                 {/* Sliding indicator */}
                 <div 
                   className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out ${
-                    activeSection === "features" 
-                      ? "translate-x-[88px] w-[76px]" 
-                      : location.pathname === "/pricing" 
-                        ? "translate-x-[172px] w-[68px]"
+                    activeSection === "pricing" 
+                      ? "translate-x-[168px] w-[72px]" 
+                      : activeSection === "features" 
+                        ? "translate-x-[84px] w-[76px]" 
                         : "translate-x-[4px] w-[76px]"
                   }`}
                 />
                 {landingNavItems.map((item, index) => {
                   const isOverview = item.href === "/";
-                  const isFeatures = item.scroll;
-                  const isPricing = item.href === "/pricing";
+                  const isFeatures = item.target === "features";
+                  const isPricing = item.target === "pricing";
                   
                   // Determine if this item should be highlighted
                   const isActive = 
                     (isOverview && activeSection === "overview" && location.pathname === "/") ||
                     (isFeatures && activeSection === "features") ||
-                    (isPricing && location.pathname === "/pricing");
+                    (isPricing && activeSection === "pricing");
 
                   return item.scroll ? (
                     <a
@@ -134,7 +145,7 @@ const Navigation = () => {
                       href={item.href}
                       onClick={(e) => {
                         e.preventDefault();
-                        const element = document.getElementById('features');
+                        const element = document.getElementById(item.target!);
                         if (element) {
                           const navHeight = 64; // Height of fixed navigation
                           const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
@@ -265,7 +276,7 @@ const Navigation = () => {
                       href={item.href}
                        onClick={(e) => {
                          e.preventDefault();
-                         const element = document.getElementById('features');
+                         const element = document.getElementById(item.target!);
                          if (element) {
                            const navHeight = 64; // Height of fixed navigation
                            const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
@@ -279,7 +290,8 @@ const Navigation = () => {
                          setIsOpen(false);
                        }}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-                        location.pathname === "/" && location.hash === "#features"
+                        (item.target === "features" && activeSection === "features") || 
+                        (item.target === "pricing" && activeSection === "pricing")
                           ? "bg-neo-purple text-background"
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                       }`}
