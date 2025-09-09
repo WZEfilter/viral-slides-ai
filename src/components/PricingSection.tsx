@@ -15,15 +15,16 @@ const PricingSection = () => {
   const [showAnimation, setShowAnimation] = useState(false);
   
   const { elementRef, isVisible } = useIntersectionObserver({
-    threshold: 0.1,
+    threshold: 0.05,
+    rootMargin: '200px 0px 0px 0px',
     triggerOnce: true
   });
 
   useEffect(() => {
-    if (isVisible && !showAnimation) {
-      setTimeout(() => setShowAnimation(true), 300);
+    if (isVisible) {
+      setShowAnimation(true);
     }
-  }, [isVisible, showAnimation]);
+  }, [isVisible]);
   
   const calculateAdditionalPrice = (additional: number) => {
     return Math.round(additional * 10) / 100;
