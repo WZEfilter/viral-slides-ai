@@ -98,7 +98,7 @@ const PricingSection = () => {
 
       <div ref={elementRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Header with popup animation */}
-        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'animate-fade-in-down' : 'opacity-0 -translate-y-8'}`}>
+        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'}`}>
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
             <span className="text-foreground">Simple and transparent </span>
             <span className="bg-gradient-hero bg-clip-text text-transparent">pricing</span>
@@ -115,9 +115,9 @@ const PricingSection = () => {
               key={plan.name}
               className={`relative p-8 bg-gradient-card border transition-all duration-700 hover:border-neo-purple/40 hover:shadow-glow-primary hover:scale-105 flex flex-col h-full ${
                 plan.popular ? "border-neo-purple/60 shadow-glow-primary scale-105" : "border-neo-purple/20"
-              } ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0 translate-y-8'}`}
+              } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
               style={{ 
-                animationDelay: `${index * 150}ms`
+                transitionDelay: isVisible ? `${index * 150}ms` : '0ms'
               }}
             >
               {plan.popular && (
@@ -208,7 +208,7 @@ const PricingSection = () => {
         </div>
 
         {/* FAQ Section with delayed animation */}
-        <div className={`mt-24 text-center transition-all duration-700 delay-700 ${isVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
+        <div className={`mt-24 text-center transition-all duration-700 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h3 className="text-3xl font-bold text-foreground mb-8">Your Questions, Answered</h3>
           <p className="text-muted-foreground mb-12">
             Get instant answers to most common questions about ViralSlides AI.
@@ -224,10 +224,10 @@ const PricingSection = () => {
               <div
                 key={question}
                 className={`bg-gradient-card border border-neo-purple/20 rounded-lg p-6 text-left hover:border-neo-purple/40 transition-all duration-300 cursor-pointer hover:scale-105 ${
-                  isVisible ? 'animate-fade-in-left' : 'opacity-0 -translate-x-8'
+                  isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
                 }`}
                 style={{ 
-                  animationDelay: isVisible ? `${800 + index * 100}ms` : '0ms' 
+                  transitionDelay: isVisible ? `${800 + index * 100}ms` : '0ms' 
                 }}
               >
                 <div className="flex items-center justify-between">
