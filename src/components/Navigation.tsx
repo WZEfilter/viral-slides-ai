@@ -118,16 +118,6 @@ const Navigation = () => {
               </div>
             ) : (
               <div className="relative flex items-center bg-muted/50 rounded-full p-1">
-                {/* Sliding indicator - Centered on text middle */}
-                <div 
-                  className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out -translate-x-1/2 ${
-                    activeSection === "pricing" 
-                      ? "left-[210px] w-[68px]" 
-                      : activeSection === "features" 
-                        ? "left-[124px] w-[72px]" 
-                        : "left-[42px] w-[76px]"
-                  }`}
-                />
                 {landingNavItems.map((item, index) => {
                   const isOverview = item.href === "/";
                   const isFeatures = item.target === "features";
@@ -170,18 +160,23 @@ const Navigation = () => {
                   };
 
                   return (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      onClick={handleClick}
-                      className={`relative z-10 px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
-                        isActive
-                          ? "text-background"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {item.name}
-                    </a>
+                    <div key={item.name} className="relative flex-1 flex justify-center">
+                      {/* Individual highlight for each item */}
+                      {isActive && (
+                        <div className="absolute inset-0 bg-neo-purple rounded-full shadow-glow-primary" />
+                      )}
+                      <a
+                        href={item.href}
+                        onClick={handleClick}
+                        className={`relative z-10 px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
+                          isActive
+                            ? "text-background"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {item.name}
+                      </a>
+                    </div>
                   );
                 })}
               </div>
