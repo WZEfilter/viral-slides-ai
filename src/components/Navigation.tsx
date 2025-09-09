@@ -118,14 +118,14 @@ const Navigation = () => {
               </div>
             ) : (
               <div className="relative flex items-center bg-muted/50 rounded-full p-1">
-                {/* Sliding indicator - Precisely centered on each text */}
+                {/* Sliding indicator - Centered on text middle */}
                 <div 
-                  className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out ${
+                  className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out -translate-x-1/2 ${
                     activeSection === "pricing" 
-                      ? "translate-x-[176px] w-[68px]" 
+                      ? "left-[210px] w-[68px]" 
                       : activeSection === "features" 
-                        ? "translate-x-[88px] w-[72px]" 
-                        : "translate-x-[4px] w-[76px]"
+                        ? "left-[124px] w-[72px]" 
+                        : "left-[42px] w-[76px]"
                   }`}
                 />
                 {landingNavItems.map((item, index) => {
