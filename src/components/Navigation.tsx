@@ -111,14 +111,24 @@ const Navigation = () => {
                 <div 
                   className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out ${
                     activeSection === "features" 
-                      ? "translate-x-[88px] w-[72px]" 
+                      ? "translate-x-[92px] w-[68px]" 
                       : location.pathname === "/pricing" 
                         ? "translate-x-[168px] w-[56px]"
-                        : "translate-x-[4px] w-[76px]"
+                        : "translate-x-[4px] w-[80px]"
                   }`}
                 />
-                {landingNavItems.map((item, index) => (
-                  item.scroll ? (
+                {landingNavItems.map((item, index) => {
+                  const isOverview = item.href === "/";
+                  const isFeatures = item.scroll;
+                  const isPricing = item.href === "/pricing";
+                  
+                  // Determine if this item should be highlighted
+                  const isActive = 
+                    (isOverview && activeSection === "overview" && location.pathname === "/") ||
+                    (isFeatures && activeSection === "features") ||
+                    (isPricing && location.pathname === "/pricing");
+
+                  return item.scroll ? (
                     <a
                       key={item.name}
                       href={item.href}
@@ -137,7 +147,7 @@ const Navigation = () => {
                         }
                       }}
                       className={`relative z-10 px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
-                        activeSection === "features"
+                        isActive
                           ? "text-background"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
@@ -149,16 +159,15 @@ const Navigation = () => {
                       key={item.name}
                       to={item.href}
                       className={`relative z-10 px-4 py-2 text-sm font-medium transition-all ${
-                        (activeSection === "overview" && item.href === "/") ||
-                        (location.pathname === item.href && item.href !== "/")
+                        isActive
                           ? "text-background"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {item.name}
                     </Link>
-                  )
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
