@@ -149,7 +149,7 @@ const Navigation = () => {
                       if (element) {
                         const navHeight = 64; // Height of fixed navigation
                         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                        const offsetPosition = elementPosition - navHeight - 20; // Extra offset
+                        const offsetPosition = elementPosition - navHeight + 80; // Scroll less to show section higher
                         
                         window.scrollTo({
                           top: offsetPosition,
@@ -300,7 +300,7 @@ const Navigation = () => {
                       if (element) {
                         const navHeight = 64; // Height of fixed navigation
                         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                        const offsetPosition = elementPosition - navHeight - 20;
+                        const offsetPosition = elementPosition - navHeight + 80;
                         
                         window.scrollTo({
                           top: offsetPosition,
