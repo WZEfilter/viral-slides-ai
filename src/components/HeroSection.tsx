@@ -116,9 +116,9 @@ const HeroSection = () => {
             }`}
             style={{ transitionDelay: visualVisible ? '400ms' : '0ms' }}
           >
-            {/* Secondary Porsche - Behind and to the right */}
-            <div className="absolute top-8 right-4 sm:right-8 lg:right-12 z-0 opacity-70 group-hover:opacity-85 transition-all duration-500 hover:scale-105">
-              <div className="bg-gradient-glass backdrop-blur-md rounded-2xl p-2 border border-neo-purple/10 transform rotate-12 scale-75">
+            {/* Secondary Porsche - Behind and to the left */}
+            <div className="absolute top-8 left-4 sm:left-8 lg:left-12 z-0 opacity-70 group-hover:opacity-85 transition-all duration-500 hover:scale-105">
+              <div className="bg-gradient-glass backdrop-blur-md rounded-2xl p-2 border border-neo-purple/10 transform -rotate-12 scale-75">
                 <img
                   src={porscheHero}
                   alt="Purple Porsche sports car with futuristic design"
