@@ -149,7 +149,7 @@ const Navigation = () => {
                       if (element) {
                         const navHeight = 64; // Height of fixed navigation
                         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                        const offsetPosition = elementPosition - navHeight - 100; // Extra scroll down
+                        const offsetPosition = elementPosition - navHeight - 20; // Extra offset
                         
                         window.scrollTo({
                           top: offsetPosition,
@@ -300,7 +300,7 @@ const Navigation = () => {
                       if (element) {
                         const navHeight = 64; // Height of fixed navigation
                         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                        const offsetPosition = elementPosition - navHeight - 100; // Extra scroll down
+                        const offsetPosition = elementPosition - navHeight - 20;
                         
                         window.scrollTo({
                           top: offsetPosition,
