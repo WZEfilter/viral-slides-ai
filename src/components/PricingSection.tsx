@@ -6,6 +6,7 @@ import { Check, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+// Fixed animation references - using isVisible instead of showAnimation
 
 const PricingSection = () => {
   const [creatorCredits, setCreatorCredits] = useState("0");
