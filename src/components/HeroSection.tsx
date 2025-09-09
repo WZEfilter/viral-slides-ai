@@ -116,35 +116,35 @@ const HeroSection = () => {
             }`}
             style={{ transitionDelay: visualVisible ? '400ms' : '0ms' }}
           >
-            {/* Main McLaren */}
-            <div className="relative group">
+            {/* Secondary Porsche - Behind and to the right */}
+            <div className="absolute top-8 right-4 sm:right-8 lg:right-12 z-0 opacity-70 group-hover:opacity-85 transition-all duration-500 hover:scale-105">
+              <div className="bg-gradient-glass backdrop-blur-md rounded-2xl p-2 border border-neo-purple/10 transform rotate-12 scale-75">
+                <img
+                  src={porscheHero}
+                  alt="Purple Porsche sports car with futuristic design"
+                  className="w-48 sm:w-56 lg:w-64 h-auto rounded-xl opacity-100"
+                />
+              </div>
+            </div>
+
+            {/* Main McLaren - Front and center */}
+            <div className="relative group z-10">
               <div className="absolute inset-0 bg-gradient-hero rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-all duration-500" />
               <div className="relative bg-gradient-glass backdrop-blur-md rounded-3xl p-4 border border-neo-purple/20 shadow-glass hover:border-neo-purple/40 hover:scale-105 transition-all duration-500 transform rotate-3">
                 <img
                   src={mclarenHero}
                   alt="Purple McLaren supercar with dynamic background"
-                  className="w-80 h-auto rounded-2xl opacity-100"
+                  className="w-72 sm:w-80 lg:w-80 h-auto rounded-2xl opacity-100"
                 />
               </div>
               
               {/* Floating Cards */}
-              <div className="absolute -top-8 -left-8 bg-gradient-card backdrop-blur-md rounded-xl p-4 border border-neo-purple/20 animate-fade-in hover:scale-110 transition-transform duration-300" style={{ animationDelay: "1s" }}>
+              <div className="absolute -top-8 -left-8 bg-gradient-card backdrop-blur-md rounded-xl p-4 border border-neo-purple/20 animate-fade-in hover:scale-110 transition-transform duration-300 z-20" style={{ animationDelay: "1s" }}>
                 <div className="text-sm font-semibold text-foreground">AI Generate Images</div>
               </div>
               
-              <div className="absolute -bottom-8 -right-8 bg-gradient-card backdrop-blur-md rounded-xl p-4 border border-neo-pink/20 animate-fade-in hover:scale-110 transition-transform duration-300" style={{ animationDelay: "1.3s" }}>
+              <div className="absolute -bottom-8 -right-8 bg-gradient-card backdrop-blur-md rounded-xl p-4 border border-neo-pink/20 animate-fade-in hover:scale-110 transition-transform duration-300 z-20" style={{ animationDelay: "1.3s" }}>
                 <div className="text-sm font-semibold text-foreground">Post Automatically</div>
-              </div>
-            </div>
-
-            {/* Secondary Porsche */}
-            <div className="absolute top-16 -right-8 z-0 opacity-70 group-hover:opacity-85 transition-all duration-500 hover:scale-105">
-              <div className="bg-gradient-glass backdrop-blur-md rounded-2xl p-2 border border-neo-purple/10 transform -rotate-12 scale-75">
-                <img
-                  src={porscheHero}
-                  alt="Purple Porsche sports car with futuristic design"
-                  className="w-64 h-auto rounded-xl opacity-100"
-                />
               </div>
             </div>
           </div>
