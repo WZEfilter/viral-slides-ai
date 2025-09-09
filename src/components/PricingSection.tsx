@@ -15,7 +15,8 @@ const PricingSection = () => {
   const [showAnimation, setShowAnimation] = useState(false);
   
   const { elementRef, isVisible } = useIntersectionObserver({
-    threshold: 0.3,
+    threshold: 0.1,
+    rootMargin: '0px 0px -150px 0px',
   });
 
   useEffect(() => {
