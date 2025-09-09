@@ -118,13 +118,13 @@ const Navigation = () => {
               </div>
             ) : (
               <div className="relative flex items-center bg-muted/50 rounded-full p-1">
-                {/* Sliding indicator - Fixed positioning */}
+                {/* Sliding indicator - Precisely centered on each text */}
                 <div 
                   className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out ${
                     activeSection === "pricing" 
-                      ? "translate-x-[168px] w-[72px]" 
+                      ? "translate-x-[176px] w-[68px]" 
                       : activeSection === "features" 
-                        ? "translate-x-[84px] w-[76px]" 
+                        ? "translate-x-[88px] w-[72px]" 
                         : "translate-x-[4px] w-[76px]"
                   }`}
                 />
