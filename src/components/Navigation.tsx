@@ -58,9 +58,9 @@ const Navigation = () => {
   );
 
   const landingNavItems = [
-    { name: "Overview", href: "/" },
-    { name: "Features", href: "/#features", scroll: true, target: "features" },
-    { name: "Pricing", href: "/#pricing", scroll: true, target: "pricing" },
+    { name: "Overview", href: "/", target: "overview" },
+    { name: "Features", href: "/#features", target: "features" },
+    { name: "Pricing", href: "/#pricing", target: "pricing" },
   ];
 
   const dashboardNavItems = [
@@ -118,14 +118,14 @@ const Navigation = () => {
               </div>
             ) : (
               <div className="relative flex items-center bg-muted/50 rounded-full p-1">
-                {/* Sliding indicator */}
+                {/* Sliding indicator - Fixed positioning */}
                 <div 
                   className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out ${
                     activeSection === "pricing" 
-                      ? "translate-x-[164px] w-[76px]" 
+                      ? "translate-x-[168px] w-[72px]" 
                       : activeSection === "features" 
-                        ? "translate-x-[82px] w-[80px]" 
-                        : "translate-x-[0px] w-[84px]"
+                        ? "translate-x-[84px] w-[76px]" 
+                        : "translate-x-[4px] w-[76px]"
                   }`}
                 />
                 {landingNavItems.map((item, index) => {
@@ -135,28 +135,45 @@ const Navigation = () => {
                   
                   // Determine if this item should be highlighted
                   const isActive = 
-                    (isOverview && activeSection === "overview" && location.pathname === "/") ||
+                    (isOverview && activeSection === "overview") ||
                     (isFeatures && activeSection === "features") ||
                     (isPricing && activeSection === "pricing");
 
-                  return item.scroll ? (
+                  const handleClick = (e: React.MouseEvent) => {
+                    e.preventDefault();
+                    
+                    if (isOverview) {
+                      // For Overview, scroll to top
+                      if (location.pathname === "/") {
+                        window.scrollTo({
+                          top: 0,
+                          behavior: 'smooth'
+                        });
+                      } else {
+                        // Navigate to homepage if not already there
+                        window.location.href = "/";
+                      }
+                    } else if (item.target) {
+                      // For Features and Pricing, scroll to sections
+                      const element = document.getElementById(item.target);
+                      if (element) {
+                        const navHeight = 64; // Height of fixed navigation
+                        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                        const offsetPosition = elementPosition - navHeight - 20; // Extra offset
+                        
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }
+                  };
+
+                  return (
                     <a
                       key={item.name}
                       href={item.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const element = document.getElementById(item.target!);
-                        if (element) {
-                          const navHeight = 64; // Height of fixed navigation
-                          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                          const offsetPosition = elementPosition - navHeight - 20; // Extra offset for better positioning
-                          
-                          window.scrollTo({
-                            top: offsetPosition,
-                            behavior: 'smooth'
-                          });
-                        }
-                      }}
+                      onClick={handleClick}
                       className={`relative z-10 px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
                         isActive
                           ? "text-background"
@@ -165,18 +182,6 @@ const Navigation = () => {
                     >
                       {item.name}
                     </a>
-                  ) : (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={`relative z-10 px-4 py-2 text-sm font-medium transition-all ${
-                        isActive
-                          ? "text-background"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {item.name}
-                    </Link>
                   );
                 })}
               </div>
@@ -269,50 +274,62 @@ const Navigation = () => {
                   );
                 })
               ) : (
-                landingNavItems.map((item) => (
-                  item.scroll ? (
+                landingNavItems.map((item) => {
+                  const isOverview = item.href === "/";
+                  const isFeatures = item.target === "features";
+                  const isPricing = item.target === "pricing";
+                  
+                  const isActive = 
+                    (isOverview && activeSection === "overview") ||
+                    (isFeatures && activeSection === "features") ||
+                    (isPricing && activeSection === "pricing");
+
+                  const handleClick = (e: React.MouseEvent) => {
+                    e.preventDefault();
+                    setIsOpen(false);
+                    
+                    if (isOverview) {
+                      // For Overview, scroll to top
+                      if (location.pathname === "/") {
+                        window.scrollTo({
+                          top: 0,
+                          behavior: 'smooth'
+                        });
+                      } else {
+                        // Navigate to homepage if not already there
+                        window.location.href = "/";
+                      }
+                    } else if (item.target) {
+                      // For Features and Pricing, scroll to sections
+                      const element = document.getElementById(item.target);
+                      if (element) {
+                        const navHeight = 64; // Height of fixed navigation
+                        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                        const offsetPosition = elementPosition - navHeight - 20;
+                        
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }
+                  };
+
+                  return (
                     <a
                       key={item.name}
                       href={item.href}
-                       onClick={(e) => {
-                         e.preventDefault();
-                         const element = document.getElementById(item.target!);
-                         if (element) {
-                           const navHeight = 64; // Height of fixed navigation
-                           const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                           const offsetPosition = elementPosition - navHeight;
-                           
-                           window.scrollTo({
-                             top: offsetPosition,
-                             behavior: 'smooth'
-                           });
-                         }
-                         setIsOpen(false);
-                       }}
+                      onClick={handleClick}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-                        (item.target === "features" && activeSection === "features") || 
-                        (item.target === "pricing" && activeSection === "pricing")
+                        isActive
                           ? "bg-neo-purple text-background"
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                       }`}
                     >
                       {item.name}
                     </a>
-                  ) : (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                        location.pathname === item.href
-                          ? "bg-neo-purple text-background"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                      }`}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  )
-                ))
+                  );
+                })
               )}
               <div className="flex flex-col space-y-2 pt-4 border-t border-neo-purple/20">
                 {isAuthenticated ? (
