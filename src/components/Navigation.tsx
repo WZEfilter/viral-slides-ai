@@ -194,6 +194,14 @@ const Navigation = () => {
                     </Button>
                   </Link>
                 )}
+                {isDashboardPage && (
+                  <Link to="/create">
+                    <Button variant="hero" size="sm">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create
+                    </Button>
+                  </Link>
+                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
