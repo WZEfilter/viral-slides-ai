@@ -42,12 +42,12 @@ const WorkflowSection = () => {
             headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 ml-4">
             <span className="bg-gradient-hero bg-clip-text text-transparent">
               Your Path to Viral Success
             </span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto ml-4">
             From setup to earnings, our AI handles everything so you can focus on growing your audience
           </p>
         </div>
