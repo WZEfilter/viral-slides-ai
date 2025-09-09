@@ -124,8 +124,7 @@ const PricingSection = () => {
                 plan.popular ? "border-neo-purple/60 shadow-glow-primary scale-105" : "border-neo-purple/20"
               } ${showAnimation ? 'animate-fade-in-up opacity-100' : 'opacity-0 translate-y-8'}`}
               style={{ 
-                animationDelay: showAnimation ? `${index * 200}ms` : '0ms',
-                transform: showAnimation ? 'translateY(0)' : 'translateY(32px)'
+                animationDelay: `${index * 150}ms`
               }}
             >
               {plan.popular && (
