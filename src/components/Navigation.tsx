@@ -111,10 +111,10 @@ const Navigation = () => {
                 <div 
                   className={`absolute h-8 bg-neo-purple rounded-full shadow-glow-primary transition-all duration-300 ease-out ${
                     activeSection === "features" 
-                      ? "translate-x-[96px] w-[72px]" 
+                      ? "translate-x-[88px] w-[76px]" 
                       : location.pathname === "/pricing" 
-                        ? "translate-x-[176px] w-[64px]"
-                        : "translate-x-[4px] w-[84px]"
+                        ? "translate-x-[172px] w-[68px]"
+                        : "translate-x-[4px] w-[76px]"
                   }`}
                 />
                 {landingNavItems.map((item, index) => {
