@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Check, Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 const PricingSection = () => {
@@ -12,19 +12,11 @@ const PricingSection = () => {
   const [entrepreneurCredits, setEntrepreneurCredits] = useState("0");
   const [creatorCustom, setCreatorCustom] = useState("");
   const [entrepreneurCustom, setEntrepreneurCustom] = useState("");
-  const [showAnimation, setShowAnimation] = useState(false);
   
   const { elementRef, isVisible } = useIntersectionObserver({
-    threshold: 0.05,
-    rootMargin: '200px 0px 0px 0px',
+    threshold: 0.1,
     triggerOnce: true
   });
-
-  useEffect(() => {
-    if (isVisible) {
-      setShowAnimation(true);
-    }
-  }, [isVisible]);
   
   const calculateAdditionalPrice = (additional: number) => {
     return Math.round(additional * 10) / 100;
@@ -99,13 +91,13 @@ const PricingSection = () => {
     <section id="pricing" className="py-24 bg-gradient-primary relative overflow-hidden">
       {/* Animated background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className={`absolute top-20 left-10 w-64 h-64 bg-neo-purple/10 rounded-full blur-3xl transition-all duration-1000 ${showAnimation ? 'animate-pulse-glow' : 'opacity-0'}`} />
-        <div className={`absolute bottom-20 right-10 w-96 h-96 bg-neo-pink/10 rounded-full blur-3xl transition-all duration-1000 delay-500 ${showAnimation ? 'animate-float' : 'opacity-0'}`} />
+        <div className={`absolute top-20 left-10 w-64 h-64 bg-neo-purple/10 rounded-full blur-3xl transition-all duration-1000 ${isVisible ? 'animate-pulse-glow' : 'opacity-0'}`} />
+        <div className={`absolute bottom-20 right-10 w-96 h-96 bg-neo-pink/10 rounded-full blur-3xl transition-all duration-1000 delay-500 ${isVisible ? 'animate-float' : 'opacity-0'}`} />
       </div>
 
       <div ref={elementRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Header with popup animation */}
-        <div className={`text-center mb-16 transition-all duration-700 ${showAnimation ? 'animate-fade-in-down' : 'opacity-0 -translate-y-8'}`}>
+        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'animate-fade-in-down' : 'opacity-0 -translate-y-8'}`}>
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
             <span className="text-foreground">Simple and transparent </span>
             <span className="bg-gradient-hero bg-clip-text text-transparent">pricing</span>
@@ -122,7 +114,7 @@ const PricingSection = () => {
               key={plan.name}
               className={`relative p-8 bg-gradient-card border transition-all duration-700 hover:border-neo-purple/40 hover:shadow-glow-primary hover:scale-105 flex flex-col h-full ${
                 plan.popular ? "border-neo-purple/60 shadow-glow-primary scale-105" : "border-neo-purple/20"
-              } ${showAnimation ? 'animate-fade-in-up opacity-100' : 'opacity-0 translate-y-8'}`}
+              } ${isVisible ? 'animate-fade-in-up opacity-100' : 'opacity-0 translate-y-8'}`}
               style={{ 
                 animationDelay: `${index * 150}ms`
               }}
@@ -215,7 +207,7 @@ const PricingSection = () => {
         </div>
 
         {/* FAQ Section with delayed animation */}
-        <div className={`mt-24 text-center transition-all duration-700 delay-700 ${showAnimation ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
+        <div className={`mt-24 text-center transition-all duration-700 delay-700 ${isVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
           <h3 className="text-3xl font-bold text-foreground mb-8">Your Questions, Answered</h3>
           <p className="text-muted-foreground mb-12">
             Get instant answers to most common questions about ViralSlides AI.
@@ -231,10 +223,10 @@ const PricingSection = () => {
               <div
                 key={question}
                 className={`bg-gradient-card border border-neo-purple/20 rounded-lg p-6 text-left hover:border-neo-purple/40 transition-all duration-300 cursor-pointer hover:scale-105 ${
-                  showAnimation ? 'animate-fade-in-left' : 'opacity-0 -translate-x-8'
+                  isVisible ? 'animate-fade-in-left' : 'opacity-0 -translate-x-8'
                 }`}
                 style={{ 
-                  animationDelay: showAnimation ? `${800 + index * 100}ms` : '0ms' 
+                  animationDelay: isVisible ? `${800 + index * 100}ms` : '0ms' 
                 }}
               >
                 <div className="flex items-center justify-between">
