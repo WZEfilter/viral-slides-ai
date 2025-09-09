@@ -72,7 +72,7 @@ const Navigation = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-neo-purple/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 w-full">
           {/* Logo */}
           <div className="flex items-center min-w-0 flex-shrink-0">
             <Link 
@@ -195,8 +195,8 @@ const Navigation = () => {
                 )}
                 {isDashboardPage && (
                   <Link to="/create">
-                    <Button variant="hero" size="sm">
-                      <Plus className="mr-2 h-4 w-4" />
+                    <Button variant="hero" size="sm" className="flex items-center gap-1.5">
+                      <Plus className="h-4 w-4" />
                       Create
                     </Button>
                   </Link>
