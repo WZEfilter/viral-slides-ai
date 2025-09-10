@@ -73,9 +73,9 @@ const Navigation = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-neo-purple/20" style={{ width: '100vw' }}>
       <div className="w-full" style={{ width: '100%', paddingRight: 'calc(100vw - 100%)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 w-full">
+          <div className="flex items-center h-16 w-full">
           {/* Logo */}
-          <div className="flex items-center min-w-0 flex-shrink-0">
+          <div className="flex items-center w-72 flex-shrink-0">
             <Link 
               to={isAuthenticated ? "/dashboard" : "/"} 
               className="flex items-center space-x-2 group"
@@ -89,7 +89,7 @@ const Navigation = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Centered */}
           <div className="hidden md:flex items-center justify-center flex-1">
             {isDashboardPage ? (
               <div className="flex items-center space-x-1 bg-muted/50 rounded-full p-1">
@@ -184,7 +184,7 @@ const Navigation = () => {
           </div>
 
           {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-3 min-w-0 flex-shrink-0">
+          <div className="hidden md:flex items-center justify-end space-x-3 w-72 flex-shrink-0">
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
                 {!isDashboardPage && (
