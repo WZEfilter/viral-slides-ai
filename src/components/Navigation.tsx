@@ -92,27 +92,32 @@ const Navigation = () => {
           {/* Desktop Navigation - Centered */}
           <div className="hidden md:flex items-center justify-center flex-1">
             {isDashboardPage ? (
-              <div className="flex items-center space-x-1 bg-muted/50 rounded-full p-1">
+              <div className="relative flex items-center bg-muted/50 rounded-full p-1">
                 {dashboardNavItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = location.pathname === item.href || 
                     (item.href === "/settings" && location.pathname.startsWith("/settings"));
                   
                   return (
-                    <Link key={item.name} to={item.href}>
-                      <Button
-                        variant={isActive ? "default" : "ghost"}
-                        size="sm"
-                        className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                          isActive 
-                            ? "bg-neo-purple text-background shadow-glow-primary" 
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                        }`}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {item.name}
-                      </Button>
-                    </Link>
+                    <div key={item.name} className="relative flex-1 flex justify-center">
+                      {isActive && (
+                        <div className="absolute inset-0 bg-neo-purple rounded-full shadow-glow-primary" />
+                      )}
+                      <Link to={item.href} className="relative z-10">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
+                            isActive 
+                              ? "text-background" 
+                              : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+                          }`}
+                        >
+                          <Icon className="h-4 w-4" />
+                          {item.name}
+                        </Button>
+                      </Link>
+                    </div>
                   );
                 })}
               </div>
