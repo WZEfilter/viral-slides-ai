@@ -76,13 +76,23 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
-    overflow-x: hidden;
-    scrollbar-gutter: stable;
-  }
-  
-  html {
-    scrollbar-gutter: stable;
-  }
+body {
+  @apply bg-background text-foreground;
+  overflow-x: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
 }
