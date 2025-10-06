@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,12 +14,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group-fixed';
 import { TimePicker } from '@/components/ui/time-picker';
 import { CreditMeter } from '@/components/CreditMeter';
 import { ArrowLeft, Plus, X, Clock, Calendar } from 'lucide-react';
-import { useCredits } from '@/hooks/useCredits';
-import { useProfile } from '@/hooks/useProfile';
-import { useToast } from '@/hooks/use-toast';
-import { useScenarios } from '@/hooks/useScenarios';
-import { usePlatforms } from '@/hooks/usePlatforms';
-import { supabase } from '@/integrations/supabase/client';
 
 interface ScheduleTime {
   id: string;
@@ -40,13 +34,6 @@ interface PlatformSelection {
 
 const CreateSlideshow = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { availableCredits, usedThisMonth, canAfford } = useCredits();
-  const { profile } = useProfile();
-  const { createScenario, updateScenario, getScenarioById, saveDraft, loadDraft, clearDraft } = useScenarios();
-  const { platforms, getConnectedPlatforms } = usePlatforms();
-  const [searchParams] = useSearchParams();
-  const editingId = searchParams.get('edit');
   
   // Core form state
   const [title, setTitle] = useState('');
@@ -66,10 +53,12 @@ const CreateSlideshow = () => {
     { day: 'Saturday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
     { day: 'Sunday', enabled: false, frequency: 1, times: [{ id: '1', time: '09:00' }] },
   ]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
-  const connectedPlatforms = getConnectedPlatforms();
+  const connectedPlatforms = [
+    { id: 'tiktok', name: 'TikTok', icon: '📱', accounts: [{ id: '1', username: '@myaccount' }] },
+    { id: 'instagram', name: 'Instagram', icon: '📷', accounts: [{ id: '2', username: '@myinsta' }] },
+    { id: 'pinterest', name: 'Pinterest', icon: '📌', accounts: [] }
+  ];
   
   // AI Model configurations with credit costs
   const aiModels = [
@@ -81,70 +70,14 @@ const CreateSlideshow = () => {
   
   const selectedModelConfig = aiModels.find(model => model.id === aiModel) || aiModels[0];
   const totalCredits = imageCount * selectedModelConfig.credits;
-  const canGenerate = title.trim() && prompt.trim() && canAfford(totalCredits) && selectedPlatforms.length > 0;
-  const canSaveDraft = title.trim() || prompt.trim(); // Allow saving with just title OR prompt
+  const canGenerate = title.trim() && prompt.trim() && selectedPlatforms.length > 0;
+  const canSaveDraft = title.trim() || prompt.trim();
   
   // Calculate usage cost estimation based on frequency and model selection
   const enabledDays = weekSchedule.filter(day => day.enabled);
   const totalPostsPerWeek = enabledDays.reduce((total, day) => total + day.frequency, 0);
   const creditsPerWeek = totalPostsPerWeek * totalCredits;
-  const creditsPerMonth = Math.round(creditsPerWeek * 4.345); // More accurate weeks per month (365.25 days / 84 days)
-
-  // Load draft on mount and handle editing scenario
-  useEffect(() => {
-    if (editingId) {
-      const scenario = getScenarioById(editingId);
-      if (scenario) {
-        setTitle(scenario.title);
-        setPrompt(scenario.description || '');
-        setIsScheduled(scenario.is_scheduled);
-        const platformSelections = scenario.platforms.map(platformId => ({
-          platformId,
-          accountIds: []
-        }));
-        setSelectedPlatforms(platformSelections);
-      }
-    } else {
-      const draft = loadDraft();
-      if (draft) {
-        setTitle(draft.title || '');
-        setPrompt(draft.description || '');
-        setIsScheduled(draft.is_scheduled || false);
-        const platformSelections = (draft.platforms || []).map(platformId => ({
-          platformId,
-          accountIds: []
-        }));
-        setSelectedPlatforms(platformSelections);
-      }
-    }
-  }, [editingId]);
-
-  // Auto-save draft with proper debouncing
-  const debouncedSaveDraft = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return () => {
-        if (!editingId && (title || prompt)) {
-          clearTimeout(timeoutId);
-          timeoutId = setTimeout(() => {
-            const draftData = {
-              title,
-              description: prompt,
-              niche: 'general',
-              platforms: selectedPlatforms.map(p => p.platformId),
-              is_scheduled: isScheduled,
-            };
-            saveDraft(draftData);
-          }, 3000);
-        }
-      };
-    })(),
-    [title, prompt, selectedPlatforms, isScheduled, editingId]
-  );
-
-  useEffect(() => {
-    debouncedSaveDraft();
-  }, [debouncedSaveDraft]);
+  const creditsPerMonth = Math.round(creditsPerWeek * 4.345);
 
   // Event handlers
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,99 +159,12 @@ const CreateSlideshow = () => {
     }));
   };
 
-  const handleSaveDraft = async () => {
-    if (!canSaveDraft) return;
-    
-    setIsSaving(true);
-    try {
-      const scenarioData = {
-        title: title.trim() || 'Untitled Scenario',
-        description: prompt.trim() || '',
-        niche: 'general',
-        platforms: selectedPlatforms.map(p => p.platformId),
-        is_scheduled: isScheduled,
-      };
-
-      if (editingId) {
-        await updateScenario(editingId, scenarioData);
-        toast({
-          title: "Scenario Updated! 📝",
-          description: "Your scenario has been saved successfully.",
-        });
-      } else {
-        await createScenario(scenarioData);
-        clearDraft();
-        toast({
-          title: "Draft Saved! 📝",
-          description: "Your scenario has been saved as a draft.",
-        });
-      }
-      
-      navigate('/my-scenarios');
-    } catch (error: any) {
-      console.error('Error saving scenario:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save scenario",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
+  const handleSaveDraft = () => {
+    navigate('/my-scenarios');
   };
 
-  const handleGenerate = async () => {
-    if (!canGenerate) return;
-
-    setIsGenerating(true);
-    try {
-      const scenarioData = {
-        title,
-        description: prompt,
-        niche: 'general',
-        platforms: selectedPlatforms.map(p => p.platformId),
-        is_scheduled: isScheduled,
-      };
-
-      let scenarioId = editingId;
-      if (!editingId) {
-        const scenario = await createScenario(scenarioData);
-        scenarioId = scenario?.id;
-        clearDraft();
-      } else {
-        await updateScenario(editingId, scenarioData);
-      }
-
-      const { data, error } = await supabase.functions.invoke('generate-content', {
-        body: {
-          prompt,
-          imageCount,
-          platforms: selectedPlatforms.map(p => p.platformId),
-          title,
-          scenarioId,
-          publishOption,
-          aiModel
-        }
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Generation Started! 🎨",
-        description: "Your content is being created. You'll be notified when it's ready.",
-      });
-
-      navigate('/results');
-    } catch (error: any) {
-      console.error('Error generating content:', error);
-      toast({
-        title: "Error",
-        description: "Failed to start generation",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGenerating(false);
-    }
+  const handleGenerate = () => {
+    // UI only - no functionality
   };
 
   return (
@@ -339,7 +185,7 @@ const CreateSlideshow = () => {
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-foreground">
-                {editingId ? 'Edit Scenario' : 'Create New Scenario'}
+                Create New Scenario
               </h1>
               <p className="text-muted-foreground">Set up your content creation scenario</p>
             </div>
@@ -567,9 +413,9 @@ const CreateSlideshow = () => {
             {/* Sidebar */}
             <div className="space-y-6">
               <CreditMeter 
-                availableCredits={availableCredits} 
-                usedThisMonth={usedThisMonth}
-                creditsLimit={profile?.credits_limit || 100}
+                availableCredits={75} 
+                usedThisMonth={25}
+                creditsLimit={100}
                 estimatedUsage={{
                   images: imageCount,
                   model: selectedModelConfig.name,
@@ -635,18 +481,18 @@ const CreateSlideshow = () => {
                 <Button
                   onClick={handleSaveDraft}
                   variant="outline"
-                  disabled={!canSaveDraft || isSaving}
+                  disabled={!canSaveDraft}
                   className="w-full hover:scale-105 transition-all duration-300"
                 >
-                  {isSaving ? 'Saving...' : 'Save Scenario as Draft'}
+                  Save Scenario as Draft
                 </Button>
                 
                 <Button
                   onClick={handleGenerate}
-                  disabled={!canGenerate || isGenerating}
+                  disabled={!canGenerate}
                   className="w-full hover:scale-105 transition-all duration-300"
                 >
-                  {isGenerating ? 'Generating...' : (isScheduled ? 'Schedule' : 'Run')}
+                  {isScheduled ? 'Schedule' : 'Run'}
                 </Button>
               </div>
             </div>

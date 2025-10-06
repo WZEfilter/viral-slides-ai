@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Link } from "react-router-dom";
 import { 
   Search, 
@@ -14,24 +13,47 @@ import {
   Play, 
   Pause, 
   Edit, 
-  Trash2,
-  MoreHorizontal
+  Trash2
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
-import { useScenarios } from "@/hooks/useScenarios";
-import { formatDistanceToNow } from "date-fns";
 
 const MyScenarios = () => {
-  const { 
-    scenarios, 
-    loading, 
-    pauseScenario, 
-    resumeScenario, 
-    deleteScenario,
-    getScheduledScenarios,
-    getUnscheduledScenarios 
-  } = useScenarios();
   const [searchTerm, setSearchTerm] = useState("");
+  const scenarios = [
+    { 
+      id: '1', 
+      title: 'Tech Innovation Campaign', 
+      description: 'Daily tech updates and innovations',
+      niche: 'technology',
+      is_scheduled: true,
+      is_paused: false,
+      status: 'active',
+      last_run_at: new Date(Date.now() - 7200000).toISOString(),
+      next_run_at: new Date(Date.now() + 86400000).toISOString()
+    },
+    { 
+      id: '2', 
+      title: 'Business Growth Series', 
+      description: 'Business tips and strategies',
+      niche: 'business',
+      is_scheduled: true,
+      is_paused: false,
+      status: 'active',
+      last_run_at: new Date(Date.now() - 86400000).toISOString(),
+      next_run_at: new Date(Date.now() + 259200000).toISOString()
+    },
+    { 
+      id: '3', 
+      title: 'Motivational Content', 
+      description: 'Daily motivation and inspiration',
+      niche: 'motivation',
+      is_scheduled: false,
+      is_paused: false,
+      status: 'draft',
+      last_run_at: null,
+      next_run_at: null
+    }
+  ];
 
   const getStatusColor = (scenario: any) => {
     if (scenario.is_scheduled && !scenario.is_paused) return "default";
@@ -52,42 +74,29 @@ const MyScenarios = () => {
     scenario.niche.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const scheduledScenarios = getScheduledScenarios().filter(scenario =>
+  const scheduledScenarios = scenarios.filter(s => s.is_scheduled).filter(scenario =>
     scenario.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const unscheduledScenarios = getUnscheduledScenarios().filter(scenario =>
+  const unscheduledScenarios = scenarios.filter(s => !s.is_scheduled).filter(scenario =>
     scenario.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handlePauseResume = async (scenario: any) => {
-    if (scenario.is_paused) {
-      await resumeScenario(scenario.id);
-    } else {
-      await pauseScenario(scenario.id);
-    }
-  };
 
   const formatLastRun = (lastRun: string | null) => {
     if (!lastRun) return "Never run";
-    return `${formatDistanceToNow(new Date(lastRun))} ago`;
+    const diff = Date.now() - new Date(lastRun).getTime();
+    const hours = Math.floor(diff / 3600000);
+    if (hours < 24) return `${hours} hours ago`;
+    return `${Math.floor(hours / 24)} days ago`;
   };
 
   const formatNextRun = (nextRun: string | null) => {
     if (!nextRun) return null;
-    return `Next: ${formatDistanceToNow(new Date(nextRun))}`;
+    const diff = new Date(nextRun).getTime() - Date.now();
+    const hours = Math.floor(diff / 3600000);
+    if (hours < 24) return `Next: in ${hours} hours`;
+    return `Next: in ${Math.floor(hours / 24)} days`;
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-primary">
-        <Navigation />
-        <div className="pt-24 pb-16 flex items-center justify-center">
-          <LoadingSpinner size="lg" />
-        </div>
-      </div>
-    );
-  }
 
   const ScenarioCard = ({ scenario }: { scenario: any }) => (
     <Card className="neo-card hover:shadow-glow transition-all duration-300">
@@ -138,7 +147,6 @@ const MyScenarios = () => {
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => handlePauseResume(scenario)}
               >
                 {scenario.is_paused ? (
                   <><Play className="h-4 w-4 mr-1" /> Resume</>
@@ -151,7 +159,6 @@ const MyScenarios = () => {
             <Button 
               variant="ghost" 
               size="sm"
-              onClick={() => deleteScenario(scenario.id)}
               className="text-destructive hover:text-destructive"
             >
               <Trash2 className="h-4 w-4 mr-1" />

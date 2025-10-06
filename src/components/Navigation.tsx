@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Zap, User, LayoutDashboard, Plus, FolderOpen, Settings as SettingsIcon } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -10,7 +9,7 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("overview");
   const location = useLocation();
-  const { isAuthenticated, user, signOut } = useAuth();
+  const isAuthenticated = false;
 
   // Scroll detection for section highlighting
   useEffect(() => {
@@ -221,7 +220,7 @@ const Navigation = () => {
                     <DropdownMenuItem asChild>
                       <Link to="/settings">Settings</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={signOut}>
+                    <DropdownMenuItem onClick={() => {}}>
                       Sign Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -353,10 +352,7 @@ const Navigation = () => {
                       variant="ghost" 
                       size="sm" 
                       className="w-full" 
-                      onClick={() => {
-                        signOut();
-                        setIsOpen(false);
-                      }}
+                      onClick={() => setIsOpen(false)}
                     >
                       Sign Out
                     </Button>
