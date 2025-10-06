@@ -1,19 +1,48 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Plus, Calendar, TrendingUp, Users, Zap, FolderOpen } from "lucide-react";
+import { Plus, Calendar, TrendingUp, Users, Zap, FolderOpen, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 
 const Dashboard = () => {
-  const remainingCredits = 75;
-  const remainingPercentage = 75;
-
   const stats = [
-    { label: "Total Posts", value: "24", icon: TrendingUp, color: "neo-purple" },
-    { label: "This Month", value: "8", icon: Calendar, color: "neo-pink" },
-    { label: "Credits Left", value: "75", icon: Zap, color: "neo-blue" },
-    { label: "Platforms", value: "3", icon: Users, color: "accent" },
+    { 
+      label: "Total Posts", 
+      value: "24", 
+      change: "+12%",
+      trend: "up",
+      icon: TrendingUp, 
+      gradient: "from-purple-500 to-pink-500",
+      chartData: [20, 45, 28, 80, 50, 82, 65]
+    },
+    { 
+      label: "This Month", 
+      value: "8", 
+      change: "+3",
+      trend: "up",
+      icon: Calendar, 
+      gradient: "from-blue-500 to-cyan-500",
+      chartData: [30, 20, 40, 35, 50, 45, 60]
+    },
+    { 
+      label: "Credits Left", 
+      value: "75", 
+      change: "-25",
+      trend: "down",
+      icon: Zap, 
+      gradient: "from-cyan-500 to-blue-500",
+      chartData: [100, 95, 85, 80, 78, 76, 75]
+    },
+    { 
+      label: "Engagement", 
+      value: "84%", 
+      change: "+7%",
+      trend: "up",
+      icon: Users, 
+      gradient: "from-pink-500 to-purple-500",
+      chartData: [60, 65, 70, 68, 75, 80, 84]
+    },
   ];
 
   const currentScenarios = [
@@ -46,15 +75,48 @@ const Dashboard = () => {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {stats.map((stat) => (
-              <Card key={stat.label} className="p-6 bg-gradient-card border border-neo-purple/20 hover:border-neo-purple/40 transition-all">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    <p className="text-3xl font-bold text-foreground">{stat.value}</p>
+            {stats.map((stat, index) => (
+              <Card 
+                key={stat.label} 
+                className="group relative overflow-hidden bg-gradient-card border border-neo-purple/20 hover:border-neo-purple/40 transition-all duration-300 hover:shadow-glow"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br opacity-5 group-hover:opacity-10 transition-opacity" 
+                     style={{ background: `linear-gradient(135deg, hsl(var(--neo-purple)), hsl(var(--neo-pink)))` }} />
+                
+                <div className="relative p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
+                      <p className="text-3xl font-bold text-foreground mb-1">{stat.value}</p>
+                      <div className="flex items-center gap-1">
+                        {stat.trend === "up" ? (
+                          <ArrowUpRight className="h-3 w-3 text-green-400" />
+                        ) : (
+                          <ArrowDownRight className="h-3 w-3 text-red-400" />
+                        )}
+                        <span className={`text-xs font-medium ${stat.trend === "up" ? "text-green-400" : "text-red-400"}`}>
+                          {stat.change}
+                        </span>
+                      </div>
+                    </div>
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} opacity-20 group-hover:opacity-30 transition-opacity`}>
+                      <stat.icon className="h-5 w-5 text-white" />
+                    </div>
                   </div>
-                  <div className={`p-3 rounded-lg bg-${stat.color}/20`}>
-                    <stat.icon className={`h-6 w-6 text-${stat.color}`} />
+                  
+                  {/* Mini sparkline chart */}
+                  <div className="flex items-end gap-1 h-12">
+                    {stat.chartData.map((height, i) => (
+                      <div 
+                        key={i} 
+                        className={`flex-1 rounded-t bg-gradient-to-t ${stat.gradient} opacity-50 group-hover:opacity-70 transition-all duration-300`}
+                        style={{ 
+                          height: `${height}%`,
+                          animationDelay: `${i * 50}ms`
+                        }}
+                      />
+                    ))}
                   </div>
                 </div>
               </Card>
@@ -130,37 +192,76 @@ const Dashboard = () => {
                 </div>
               </Card>
 
-              <Card className="p-6 bg-gradient-card border border-neo-pink/20">
-                <div className="flex items-center gap-2 mb-4">
-                  <Zap className="h-5 w-5 text-neo-blue" />
-                  <h3 className="font-semibold text-foreground">Credits Usage</h3>
-                </div>
+              <Card className="relative overflow-hidden bg-gradient-card border border-neo-pink/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-cyan-500/5" />
                 
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Available credits</span>
-                    <span className="text-foreground font-medium">
-                      75 / 100
-                    </span>
+                <div className="relative p-6">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Zap className="h-5 w-5 text-neo-blue" />
+                    <h3 className="font-semibold text-foreground">Credits Usage</h3>
                   </div>
                   
-                  <Progress 
-                    value={75} 
-                    className="h-3"
-                  />
-                  
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>0</span>
-                    <span>25 used this month</span>
-                    <span>100</span>
+                  {/* Circular progress */}
+                  <div className="flex justify-center mb-6">
+                    <div className="relative w-40 h-40">
+                      {/* Background circle */}
+                      <svg className="w-full h-full transform -rotate-90">
+                        <circle
+                          cx="80"
+                          cy="80"
+                          r="70"
+                          stroke="hsl(var(--muted))"
+                          strokeWidth="12"
+                          fill="none"
+                          opacity="0.2"
+                        />
+                        {/* Progress circle */}
+                        <circle
+                          cx="80"
+                          cy="80"
+                          r="70"
+                          stroke="url(#gradient)"
+                          strokeWidth="12"
+                          fill="none"
+                          strokeDasharray={`${2 * Math.PI * 70}`}
+                          strokeDashoffset={`${2 * Math.PI * 70 * (1 - 0.75)}`}
+                          strokeLinecap="round"
+                          className="transition-all duration-1000"
+                        />
+                        <defs>
+                          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="hsl(var(--neo-purple))" />
+                            <stop offset="100%" stopColor="hsl(var(--neo-blue))" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      
+                      {/* Center text */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-3xl font-bold text-foreground">75</span>
+                        <span className="text-xs text-muted-foreground">credits left</span>
+                      </div>
+                    </div>
                   </div>
+                  
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Available</span>
+                      <span className="text-foreground font-medium">75 / 100</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Used this month</span>
+                      <span className="text-foreground font-medium">25</span>
+                    </div>
+                  </div>
+                  
+                  <Link to="/settings?tab=billing" className="block">
+                    <Button variant="neon" size="sm" className="w-full group">
+                      Upgrade Plan
+                      <ArrowUpRight className="ml-2 h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    </Button>
+                  </Link>
                 </div>
-                
-                <Link to="/settings?tab=billing" className="block mt-4">
-                  <Button variant="neon" size="sm" className="w-full">
-                    Upgrade Plan
-                  </Button>
-                </Link>
               </Card>
             </div>
           </div>

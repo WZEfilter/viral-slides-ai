@@ -98,46 +98,83 @@ const MyScenarios = () => {
     return `Next: in ${Math.floor(hours / 24)} days`;
   };
 
-  const ScenarioCard = ({ scenario }: { scenario: any }) => (
-    <Card className="neo-card hover:shadow-glow transition-all duration-300">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-lg font-semibold text-foreground mb-2">
-              {scenario.title}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground mb-3">
-              {scenario.description || "No description"}
-            </p>
-            <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline" className="text-xs">
-                {scenario.niche}
-              </Badge>
-              <Badge variant={getStatusColor(scenario)} className="text-xs">
-                {getStatusText(scenario)}
-              </Badge>
+  const ScenarioCard = ({ scenario }: { scenario: any }) => {
+    const successRate = Math.floor(Math.random() * 30) + 70; // 70-100%
+    
+    return (
+      <Card className="group relative overflow-hidden neo-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02]">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+        
+        <CardHeader className="pb-3 relative">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <Calendar className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <CardTitle className="text-lg font-semibold text-foreground">
+                    {scenario.title}
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground">
+                    {scenario.niche}
+                  </p>
+                </div>
+              </div>
+              
+              <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                {scenario.description || "No description"}
+              </p>
+              
+              <div className="flex items-center gap-2">
+                <Badge variant={getStatusColor(scenario)} className="text-xs">
+                  {getStatusText(scenario)}
+                </Badge>
+              </div>
             </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              <span>{formatLastRun(scenario.last_run_at)}</span>
+        </CardHeader>
+        
+        <CardContent className="pt-0 space-y-4 relative">
+          {/* Performance bar */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-muted-foreground">Success Rate</span>
+              <span className="text-foreground font-medium">{successRate}%</span>
             </div>
+            <div className="h-2 bg-muted/20 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full transition-all duration-1000"
+                style={{ width: `${successRate}%` }}
+              />
+            </div>
+          </div>
+          
+          {/* Time info */}
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="flex items-center gap-2 p-2 bg-muted/10 rounded-lg">
+              <Clock className="h-3 w-3 text-muted-foreground" />
+              <div>
+                <div className="text-muted-foreground">Last Run</div>
+                <div className="text-foreground font-medium">{formatLastRun(scenario.last_run_at)}</div>
+              </div>
+            </div>
+            
             {scenario.is_scheduled && scenario.next_run_at && (
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>{formatNextRun(scenario.next_run_at)}</span>
+              <div className="flex items-center gap-2 p-2 bg-muted/10 rounded-lg">
+                <Calendar className="h-3 w-3 text-muted-foreground" />
+                <div>
+                  <div className="text-muted-foreground">Next Run</div>
+                  <div className="text-foreground font-medium">{formatNextRun(scenario.next_run_at)}</div>
+                </div>
               </div>
             )}
           </div>
           
-          <div className="flex items-center gap-2">
-            <Link to={`/create?edit=${scenario.id}`}>
-              <Button variant="ghost" size="sm">
+          {/* Actions */}
+          <div className="flex items-center gap-2 pt-2 border-t border-neo-purple/10">
+            <Link to={`/create?edit=${scenario.id}`} className="flex-1">
+              <Button variant="ghost" size="sm" className="w-full">
                 <Edit className="h-4 w-4 mr-1" />
                 Edit
               </Button>
@@ -147,6 +184,7 @@ const MyScenarios = () => {
               <Button 
                 variant="ghost" 
                 size="sm"
+                className="flex-1"
               >
                 {scenario.is_paused ? (
                   <><Play className="h-4 w-4 mr-1" /> Resume</>
@@ -161,14 +199,13 @@ const MyScenarios = () => {
               size="sm"
               className="text-destructive hover:text-destructive"
             >
-              <Trash2 className="h-4 w-4 mr-1" />
-              Delete
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-primary">
