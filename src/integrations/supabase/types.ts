@@ -10,317 +10,242 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
-      asset_mappings: {
-        Row: {
-          asset_id: string
-          asset_type: string
-          content_id: string
-          created_at: string
-          id: string
-          original_url: string
-        }
-        Insert: {
-          asset_id: string
-          asset_type: string
-          content_id: string
-          created_at?: string
-          id?: string
-          original_url: string
-        }
-        Update: {
-          asset_id?: string
-          asset_type?: string
-          content_id?: string
-          created_at?: string
-          id?: string
-          original_url?: string
-        }
-        Relationships: []
-      }
       credit_transactions: {
         Row: {
           amount: number
           created_at: string
-          description: string | null
+          description: string
+          generation_id: string | null
           id: string
-          metadata: Json | null
-          scenario_id: string | null
-          transaction_type: string
+          type: string
           user_id: string
         }
         Insert: {
           amount: number
           created_at?: string
-          description?: string | null
+          description: string
+          generation_id?: string | null
           id?: string
-          metadata?: Json | null
-          scenario_id?: string | null
-          transaction_type: string
+          type: string
           user_id: string
         }
         Update: {
           amount?: number
           created_at?: string
-          description?: string | null
+          description?: string
+          generation_id?: string | null
           id?: string
-          metadata?: Json | null
-          scenario_id?: string | null
-          transaction_type?: string
+          type?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "credit_transactions_scenario_id_fkey"
-            columns: ["scenario_id"]
+            foreignKeyName: "credit_transactions_generation_id_fkey"
+            columns: ["generation_id"]
             isOneToOne: false
-            referencedRelation: "scenarios"
+            referencedRelation: "generation_history"
             referencedColumns: ["id"]
           },
         ]
       }
-      generated_content: {
+      generation_history: {
         Row: {
-          content_type: string
+          caption: string | null
           content_urls: string[] | null
           created_at: string
-          credits_used: number | null
+          credits_refunded: number
+          credits_used: number
+          error_message: string | null
+          expanded_prompt: string | null
+          expires_at: string
           id: string
-          metadata: Json | null
-          prompt: string | null
-          published_platforms: string[] | null
+          is_playground: boolean
+          original_prompt: string
           scenario_id: string | null
-          status: string | null
+          status: string
+          target_accounts: Json | null
           thumbnail_url: string | null
-          title: string
-          updated_at: string
+          type: string
           user_id: string
         }
         Insert: {
-          content_type: string
+          caption?: string | null
           content_urls?: string[] | null
           created_at?: string
-          credits_used?: number | null
+          credits_refunded?: number
+          credits_used?: number
+          error_message?: string | null
+          expanded_prompt?: string | null
+          expires_at?: string
           id?: string
-          metadata?: Json | null
-          prompt?: string | null
-          published_platforms?: string[] | null
+          is_playground?: boolean
+          original_prompt: string
           scenario_id?: string | null
-          status?: string | null
+          status?: string
+          target_accounts?: Json | null
           thumbnail_url?: string | null
-          title: string
-          updated_at?: string
+          type: string
           user_id: string
         }
         Update: {
-          content_type?: string
+          caption?: string | null
           content_urls?: string[] | null
           created_at?: string
-          credits_used?: number | null
+          credits_refunded?: number
+          credits_used?: number
+          error_message?: string | null
+          expanded_prompt?: string | null
+          expires_at?: string
           id?: string
-          metadata?: Json | null
-          prompt?: string | null
-          published_platforms?: string[] | null
+          is_playground?: boolean
+          original_prompt?: string
           scenario_id?: string | null
-          status?: string | null
+          status?: string
+          target_accounts?: Json | null
           thumbnail_url?: string | null
-          title?: string
-          updated_at?: string
+          type?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "generated_content_scenario_id_fkey"
+            foreignKeyName: "generation_history_scenario_id_fkey"
             columns: ["scenario_id"]
             isOneToOne: false
             referencedRelation: "scenarios"
             referencedColumns: ["id"]
           },
         ]
-      }
-      platform_connections: {
-        Row: {
-          access_token: string | null
-          account_id: string
-          account_username: string
-          created_at: string
-          expires_at: string | null
-          id: string
-          is_active: boolean | null
-          metadata: Json | null
-          platform_type: string
-          refresh_token: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          access_token?: string | null
-          account_id: string
-          account_username: string
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean | null
-          metadata?: Json | null
-          platform_type: string
-          refresh_token?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          access_token?: string | null
-          account_id?: string
-          account_username?: string
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean | null
-          metadata?: Json | null
-          platform_type?: string
-          refresh_token?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       profiles: {
         Row: {
-          avatar_url: string | null
           created_at: string
-          credits_limit: number | null
-          credits_used: number | null
-          email: string | null
-          full_name: string | null
+          credits_balance: number
           id: string
-          subscription_tier: string | null
+          subscription_plan: string | null
           updated_at: string
-          user_id: string
         }
         Insert: {
-          avatar_url?: string | null
           created_at?: string
-          credits_limit?: number | null
-          credits_used?: number | null
-          email?: string | null
-          full_name?: string | null
-          id?: string
-          subscription_tier?: string | null
+          credits_balance?: number
+          id: string
+          subscription_plan?: string | null
           updated_at?: string
-          user_id: string
         }
         Update: {
-          avatar_url?: string | null
           created_at?: string
-          credits_limit?: number | null
-          credits_used?: number | null
-          email?: string | null
-          full_name?: string | null
+          credits_balance?: number
           id?: string
-          subscription_tier?: string | null
+          subscription_plan?: string | null
           updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
       scenarios: {
         Row: {
-          content_style: string | null
+          ai_model: string
           created_at: string
-          description: string | null
+          custom_thumbnail_url: string | null
           id: string
-          is_paused: boolean | null
-          is_scheduled: boolean | null
-          last_run_at: string | null
+          image_count: number | null
           next_run_at: string | null
-          niche: string
-          platforms: string[] | null
-          schedule_frequency: string | null
-          scheduled_time: string | null
-          status: string | null
-          target_audience: string | null
+          privacy: string
+          prompt: string
+          schedule_days: string[] | null
+          schedule_time: string
+          schedule_type: string
+          status: string
+          target_accounts: string[]
+          timezone: string
           title: string
+          type: string
           updated_at: string
           user_id: string
         }
         Insert: {
-          content_style?: string | null
+          ai_model: string
           created_at?: string
-          description?: string | null
+          custom_thumbnail_url?: string | null
           id?: string
-          is_paused?: boolean | null
-          is_scheduled?: boolean | null
-          last_run_at?: string | null
+          image_count?: number | null
           next_run_at?: string | null
-          niche: string
-          platforms?: string[] | null
-          schedule_frequency?: string | null
-          scheduled_time?: string | null
-          status?: string | null
-          target_audience?: string | null
+          privacy: string
+          prompt: string
+          schedule_days?: string[] | null
+          schedule_time: string
+          schedule_type: string
+          status?: string
+          target_accounts: string[]
+          timezone?: string
           title: string
+          type: string
           updated_at?: string
           user_id: string
         }
         Update: {
-          content_style?: string | null
+          ai_model?: string
           created_at?: string
-          description?: string | null
+          custom_thumbnail_url?: string | null
           id?: string
-          is_paused?: boolean | null
-          is_scheduled?: boolean | null
-          last_run_at?: string | null
+          image_count?: number | null
           next_run_at?: string | null
-          niche?: string
-          platforms?: string[] | null
-          schedule_frequency?: string | null
-          scheduled_time?: string | null
-          status?: string | null
-          target_audience?: string | null
+          privacy?: string
+          prompt?: string
+          schedule_days?: string[] | null
+          schedule_time?: string
+          schedule_type?: string
+          status?: string
+          target_accounts?: string[]
+          timezone?: string
           title?: string
+          type?: string
           updated_at?: string
           user_id?: string
         }
         Relationships: []
       }
-      subscribers: {
+      tiktok_connections: {
         Row: {
+          access_token: string
+          avatar_url: string | null
           created_at: string
-          email: string
+          daily_post_count: number
           id: string
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
-          subscribed: boolean
-          subscription_end: string | null
-          subscription_tier: string | null
+          last_reset_date: string
+          refresh_token: string
+          token_expires_at: string
           updated_at: string
-          user_id: string | null
+          user_id: string
+          username: string
         }
         Insert: {
+          access_token: string
+          avatar_url?: string | null
           created_at?: string
-          email: string
+          daily_post_count?: number
           id?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          subscribed?: boolean
-          subscription_end?: string | null
-          subscription_tier?: string | null
+          last_reset_date?: string
+          refresh_token: string
+          token_expires_at: string
           updated_at?: string
-          user_id?: string | null
+          user_id: string
+          username: string
         }
         Update: {
+          access_token?: string
+          avatar_url?: string | null
           created_at?: string
-          email?: string
+          daily_post_count?: number
           id?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          subscribed?: boolean
-          subscription_end?: string | null
-          subscription_tier?: string | null
+          last_reset_date?: string
+          refresh_token?: string
+          token_expires_at?: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
+          username?: string
         }
         Relationships: []
       }
@@ -329,7 +254,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_expired_history: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      reset_tiktok_counters: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
