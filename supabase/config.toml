@@ -21,14 +21,20 @@ enable_confirmations = false
 enable_recovery = true
 double_confirm_changes = false
 
-[functions.generate-content]
+[functions.content-director]
 verify_jwt = true
 
-[functions.handle-generation-callback]
+[functions.generate-images]
+verify_jwt = true
+
+[functions.generate-video]
+verify_jwt = true
+
+[functions.tiktok-oauth]
 verify_jwt = false
 
-[functions.enhance-prompt]
-verify_jwt = false
+[functions.tiktok-post]
+verify_jwt = true
 
-[functions.serve-asset]
+[functions.run-scheduler]
 verify_jwt = false

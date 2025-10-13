@@ -12,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group-fixed';
 import { TimePicker } from '@/components/ui/time-picker';
-import { CreditMeter } from '@/components/CreditMeter';
+
 import { ArrowLeft, Plus, X, Clock, Calendar } from 'lucide-react';
 
 interface ScheduleTime {
@@ -412,17 +412,6 @@ const CreateSlideshow = () => {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              <CreditMeter 
-                availableCredits={75} 
-                usedThisMonth={25}
-                creditsLimit={100}
-                estimatedUsage={{
-                  images: imageCount,
-                  model: selectedModelConfig.name,
-                  totalCredits: totalCredits
-                }}
-              />
-              
               <Card className="neo-card">
                 <CardHeader>
                   <CardTitle>Generation Cost</CardTitle>

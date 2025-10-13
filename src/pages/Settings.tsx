@@ -10,10 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import Navigation from '@/components/Navigation';
-import { ProfileSettings } from '@/components/ProfileSettings';
 import { usePlatforms } from '@/hooks/usePlatforms';
-import { useProfile } from '@/hooks/useProfile';
-import { useCredits } from '@/hooks/useCredits';
 import { useSearchParams } from 'react-router-dom';
 import { 
   Settings as SettingsIcon, 
@@ -35,8 +32,7 @@ import {
 
 const Settings = () => {
   const { platforms, getConnectedPlatforms } = usePlatforms();
-  const { profile } = useProfile();
-  const { availableCredits, usedThisMonth } = useCredits();
+  const usedThisMonth = 0; // Placeholder - will be connected to real data later
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('profile');
   const [selectedPlan, setSelectedPlan] = useState('creator');
@@ -113,7 +109,15 @@ const Settings = () => {
             </TabsList>
 
             <TabsContent value="profile" className="space-y-6">
-              <ProfileSettings />
+              <Card>
+                <CardHeader>
+                  <CardTitle>Profile Settings</CardTitle>
+                  <CardDescription>Manage your profile information</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Profile settings coming soon...</p>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="platforms" className="space-y-6">

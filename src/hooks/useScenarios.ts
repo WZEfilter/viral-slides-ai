@@ -7,32 +7,36 @@ export interface Scenario {
   id: string;
   user_id: string;
   title: string;
-  description: string | null;
-  niche: string;
-  target_audience: string | null;
-  content_style: string | null;
-  platforms: string[];
-  status: 'draft' | 'active' | 'paused' | 'completed';
+  prompt: string;
+  type: 'image' | 'video';
+  ai_model: string;
+  image_count: number | null;
+  custom_thumbnail_url: string | null;
+  schedule_type: 'daily' | 'custom';
+  schedule_time: string;
+  schedule_days: string[] | null;
+  target_accounts: string[];
+  privacy: 'public' | 'private';
+  status: 'draft' | 'active' | 'inactive';
+  next_run_at: string | null;
+  timezone: string;
   created_at: string;
   updated_at: string;
-  scheduled_time: string | null;
-  is_scheduled: boolean;
-  last_run_at: string | null;
-  schedule_frequency: string | null;
-  is_paused: boolean;
-  next_run_at: string | null;
 }
 
 export interface CreateScenarioData {
   title: string;
-  description?: string;
-  niche: string;
-  target_audience?: string;
-  content_style?: string;
-  platforms: string[];
-  scheduled_time?: string;
-  is_scheduled?: boolean;
-  schedule_frequency?: string;
+  prompt: string;
+  type: 'image' | 'video';
+  ai_model: string;
+  image_count?: number;
+  custom_thumbnail_url?: string;
+  schedule_type: 'daily' | 'custom';
+  schedule_time: string;
+  schedule_days?: string[];
+  target_accounts: string[];
+  privacy: 'public' | 'private';
+  timezone?: string;
 }
 
 export const useScenarios = () => {
@@ -174,19 +178,19 @@ export const useScenarios = () => {
   };
 
   const getScheduledScenarios = (): Scenario[] => {
-    return scenarios.filter(scenario => scenario.is_scheduled && !scenario.is_paused);
+    return scenarios.filter(scenario => scenario.status === 'active' && scenario.next_run_at);
   };
 
   const getUnscheduledScenarios = (): Scenario[] => {
-    return scenarios.filter(scenario => !scenario.is_scheduled);
+    return scenarios.filter(scenario => scenario.status === 'draft');
   };
 
   const pauseScenario = async (id: string): Promise<boolean> => {
-    return updateScenario(id, { is_paused: true });
+    return updateScenario(id, { status: 'inactive' });
   };
 
   const resumeScenario = async (id: string): Promise<boolean> => {
-    return updateScenario(id, { is_paused: false });
+    return updateScenario(id, { status: 'active' });
   };
 
   const saveDraft = (draftData: Partial<CreateScenarioData>) => {
