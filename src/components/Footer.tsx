@@ -225,11 +225,16 @@ const Footer = () => {
             bottomVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <p className={`text-muted-foreground text-sm mb-4 md:mb-0 transition-all duration-700 ${
+          <div className={`text-muted-foreground text-sm mb-4 md:mb-0 space-y-1 transition-all duration-700 ${
             bottomVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
           }`}>
-            © {currentYear} ViralSlides AI. All rights reserved.
-          </p>
+            <p>
+              © {currentYear} REIYU STUDIO PTE. LTD. (UEN: 202524466H) — All rights reserved.
+            </p>
+            <p>
+              Registered Address: 360 YISHUN RING ROAD, #02-1632, SINGAPORE 760360
+            </p>
+          </div>
           
           <div className={`flex items-center space-x-6 text-sm text-muted-foreground transition-all duration-700 ${
             bottomVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
