@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+
+interface User {
+  id: string;
+  email?: string;
+  user_metadata?: {
+    full_name?: string;
+  };
+}
+
+interface Session {
+  user: User;
+  access_token: string;
+}
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -10,71 +21,43 @@ export const useAuth = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    let mounted = true;
-    
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (!mounted) return;
-        
-        console.log('Auth state change:', event, session?.user?.email);
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-        
-        // Clear any stale cached data on sign out
-        if (event === 'SIGNED_OUT') {
-          localStorage.removeItem('sb-iovkqbsexontzywbapur-auth-token');
-          sessionStorage.clear();
-        }
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (!mounted) return;
-      
-      if (error) {
-        console.error('Error getting session:', error);
-        setLoading(false);
-        return;
-      }
-      
-      console.log('Initial session:', session?.user?.email);
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
+    // Check for existing session in localStorage
+    const storedSession = localStorage.getItem('auth-session');
+    if (storedSession) {
+      const parsedSession = JSON.parse(storedSession);
+      setSession(parsedSession);
+      setUser(parsedSession.user);
+    }
+    setLoading(false);
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { data, error } = await supabase.auth.signUp({
+      // Mock sign up - in a real app, this would call your backend API
+      const mockUser: User = {
+        id: crypto.randomUUID(),
         email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            full_name: fullName
-          }
+        user_metadata: {
+          full_name: fullName
         }
-      });
+      };
 
-      if (error) throw error;
+      const mockSession: Session = {
+        user: mockUser,
+        access_token: 'mock-token-' + crypto.randomUUID()
+      };
+
+      // Store in localStorage
+      localStorage.setItem('auth-session', JSON.stringify(mockSession));
+      setUser(mockUser);
+      setSession(mockSession);
 
       toast({
         title: "Account created!",
-        description: "Please check your email to verify your account.",
+        description: "Mock authentication - replace with your backend API.",
       });
 
-      return { data, error: null };
+      return { data: { user: mockUser, session: mockSession }, error: null };
     } catch (error: any) {
       toast({
         title: "Error",
@@ -87,19 +70,29 @@ export const useAuth = () => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      // Mock sign in - in a real app, this would call your backend API
+      const mockUser: User = {
+        id: crypto.randomUUID(),
         email,
-        password,
-      });
+        user_metadata: {}
+      };
 
-      if (error) throw error;
+      const mockSession: Session = {
+        user: mockUser,
+        access_token: 'mock-token-' + crypto.randomUUID()
+      };
+
+      // Store in localStorage
+      localStorage.setItem('auth-session', JSON.stringify(mockSession));
+      setUser(mockUser);
+      setSession(mockSession);
 
       toast({
         title: "Welcome back!",
-        description: "You have successfully signed in.",
+        description: "Mock authentication - replace with your backend API.",
       });
 
-      return { data, error: null };
+      return { data: { user: mockUser, session: mockSession }, error: null };
     } catch (error: any) {
       toast({
         title: "Error",
@@ -112,22 +105,12 @@ export const useAuth = () => {
 
   const signOut = async () => {
     try {
-      // Clear local state first
+      // Clear local state
       setUser(null);
       setSession(null);
-      
-      // Sign out from current session only (not global to allow multiple logins)
-      const { error } = await supabase.auth.signOut({
-        scope: 'local' // Only sign out current session
-      });
-      
-      if (error) {
-        // Even if signOut fails, still clear local state
-        console.warn('Sign out warning:', error.message);
-      }
 
-      // Clear any cached auth data
-      localStorage.removeItem('sb-iovkqbsexontzywbapur-auth-token');
+      // Clear localStorage
+      localStorage.removeItem('auth-session');
       sessionStorage.clear();
 
       toast({

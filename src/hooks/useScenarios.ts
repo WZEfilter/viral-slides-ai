@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
 
@@ -39,6 +38,9 @@ export interface CreateScenarioData {
   timezone?: string;
 }
 
+// Mock data storage - replace with actual API calls
+const SCENARIOS_STORAGE_KEY = 'mock_scenarios';
+
 export const useScenarios = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -58,14 +60,14 @@ export const useScenarios = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from('scenarios')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false });
+      // Mock implementation - load from localStorage
+      // In a real app, this would be an API call to your backend
+      const storedScenarios = localStorage.getItem(SCENARIOS_STORAGE_KEY);
+      const allScenarios: Scenario[] = storedScenarios ? JSON.parse(storedScenarios) : [];
 
-      if (error) throw error;
-      setScenarios((data || []) as Scenario[]);
+      // Filter scenarios for the current user
+      const userScenarios = allScenarios.filter(s => s.user_id === user.id);
+      setScenarios(userScenarios);
     } catch (error: any) {
       console.error('Error loading scenarios:', error);
       toast({
@@ -78,29 +80,48 @@ export const useScenarios = () => {
     }
   };
 
+  const saveToStorage = (updatedScenarios: Scenario[]) => {
+    // Get all scenarios from storage
+    const storedScenarios = localStorage.getItem(SCENARIOS_STORAGE_KEY);
+    const allScenarios: Scenario[] = storedScenarios ? JSON.parse(storedScenarios) : [];
+
+    // Remove current user's scenarios and add updated ones
+    const otherUsersScenarios = allScenarios.filter(s => s.user_id !== user?.id);
+    const newAllScenarios = [...otherUsersScenarios, ...updatedScenarios];
+
+    // Save back to storage
+    localStorage.setItem(SCENARIOS_STORAGE_KEY, JSON.stringify(newAllScenarios));
+  };
+
   const createScenario = async (scenarioData: CreateScenarioData): Promise<Scenario | null> => {
     if (!user) return null;
 
     try {
-      const { data, error } = await supabase
-        .from('scenarios')
-        .insert({
-          user_id: user.id,
-          ...scenarioData
-        })
-        .select()
-        .single();
+      // Mock implementation - in a real app, this would call your backend API
+      const newScenario: Scenario = {
+        id: crypto.randomUUID(),
+        user_id: user.id,
+        ...scenarioData,
+        image_count: scenarioData.image_count ?? null,
+        custom_thumbnail_url: scenarioData.custom_thumbnail_url ?? null,
+        schedule_days: scenarioData.schedule_days ?? null,
+        status: 'draft',
+        next_run_at: null,
+        timezone: scenarioData.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
 
-      if (error) throw error;
+      const updatedScenarios = [newScenario, ...scenarios];
+      setScenarios(updatedScenarios);
+      saveToStorage(updatedScenarios);
 
-      setScenarios(prev => [data as Scenario, ...prev]);
-      
       toast({
         title: "Success",
         description: "Scenario created successfully",
       });
 
-      return data as Scenario;
+      return newScenario;
     } catch (error: any) {
       console.error('Error creating scenario:', error);
       toast({
@@ -116,19 +137,15 @@ export const useScenarios = () => {
     if (!user) return false;
 
     try {
-      const { data, error } = await supabase
-        .from('scenarios')
-        .update(updates)
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .select()
-        .single();
+      // Mock implementation - in a real app, this would call your backend API
+      const updatedScenarios = scenarios.map(scenario =>
+        scenario.id === id
+          ? { ...scenario, ...updates, updated_at: new Date().toISOString() }
+          : scenario
+      );
 
-      if (error) throw error;
-
-      setScenarios(prev => prev.map(scenario => 
-        scenario.id === id ? (data as Scenario) : scenario
-      ));
+      setScenarios(updatedScenarios);
+      saveToStorage(updatedScenarios);
 
       return true;
     } catch (error: any) {
@@ -146,16 +163,11 @@ export const useScenarios = () => {
     if (!user) return false;
 
     try {
-      const { error } = await supabase
-        .from('scenarios')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
+      // Mock implementation - in a real app, this would call your backend API
+      const updatedScenarios = scenarios.filter(scenario => scenario.id !== id);
+      setScenarios(updatedScenarios);
+      saveToStorage(updatedScenarios);
 
-      if (error) throw error;
-
-      setScenarios(prev => prev.filter(scenario => scenario.id !== id));
-      
       toast({
         title: "Success",
         description: "Scenario deleted successfully",
