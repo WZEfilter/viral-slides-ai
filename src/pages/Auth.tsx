@@ -7,9 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
   const { signIn, signUp, isAuthenticated, loading } = useAuth();
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form states
@@ -44,6 +46,12 @@ const Auth = () => {
     e.preventDefault();
     
     if (signUpData.password !== signUpData.confirmPassword) {
+      toast({
+        title: 'Passwords do not match',
+        description: 'Please confirm your password.',
+        variant: 'destructive'
+      });
+      setIsSubmitting(false);
       return;
     }
     

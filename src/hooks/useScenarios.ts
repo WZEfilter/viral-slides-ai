@@ -46,18 +46,19 @@ export const useScenarios = () => {
   const { toast } = useToast();
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [loading, setLoading] = useState(true);
+  const userId = (user as any)?._id || (user as any)?.id || null;
 
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       setLoading(false);
       return;
     }
 
     loadScenarios();
-  }, [user]);
+  }, [userId]);
 
   const loadScenarios = async () => {
-    if (!user) return;
+    if (!userId) return;
 
     try {
       // Mock implementation - load from localStorage
@@ -66,7 +67,7 @@ export const useScenarios = () => {
       const allScenarios: Scenario[] = storedScenarios ? JSON.parse(storedScenarios) : [];
 
       // Filter scenarios for the current user
-      const userScenarios = allScenarios.filter(s => s.user_id === user.id);
+      const userScenarios = allScenarios.filter(s => s.user_id === userId);
       setScenarios(userScenarios);
     } catch (error: any) {
       console.error('Error loading scenarios:', error);
@@ -86,7 +87,7 @@ export const useScenarios = () => {
     const allScenarios: Scenario[] = storedScenarios ? JSON.parse(storedScenarios) : [];
 
     // Remove current user's scenarios and add updated ones
-    const otherUsersScenarios = allScenarios.filter(s => s.user_id !== user?.id);
+    const otherUsersScenarios = allScenarios.filter(s => s.user_id !== userId);
     const newAllScenarios = [...otherUsersScenarios, ...updatedScenarios];
 
     // Save back to storage
@@ -94,13 +95,13 @@ export const useScenarios = () => {
   };
 
   const createScenario = async (scenarioData: CreateScenarioData): Promise<Scenario | null> => {
-    if (!user) return null;
+    if (!userId) return null;
 
     try {
       // Mock implementation - in a real app, this would call your backend API
       const newScenario: Scenario = {
         id: crypto.randomUUID(),
-        user_id: user.id,
+        user_id: userId,
         ...scenarioData,
         image_count: scenarioData.image_count ?? null,
         custom_thumbnail_url: scenarioData.custom_thumbnail_url ?? null,
@@ -134,7 +135,7 @@ export const useScenarios = () => {
   };
 
   const updateScenario = async (id: string, updates: Partial<Scenario>): Promise<boolean> => {
-    if (!user) return false;
+    if (!userId) return false;
 
     try {
       // Mock implementation - in a real app, this would call your backend API
@@ -160,7 +161,7 @@ export const useScenarios = () => {
   };
 
   const deleteScenario = async (id: string): Promise<boolean> => {
-    if (!user) return false;
+    if (!userId) return false;
 
     try {
       // Mock implementation - in a real app, this would call your backend API
